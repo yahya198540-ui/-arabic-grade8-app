@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700&display=swap');
+
+body {
+  font-family: 'Almarai', sans-serif;
+  direction: rtl;
+  text-align: right;
+}
+
+:root {
+  --primary: #1e40af;
+  --secondary: #7c3aed;
+  --success: #16a34a;
+  --warning: #ea580c;
+  --danger: #dc2626;
+}
+
+* {
+  direction: rtl;
+  text-align: inherit;
+}
+
+input, textarea, select {
+  font-family: 'Almarai', sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1f2937;
+    color: #f3f4f6;
+  }
+}
