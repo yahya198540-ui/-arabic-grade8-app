@@ -1,4 +1,4 @@
-const CACHE_NAME = 'arabic-lesson-prep-v2'
+const CACHE_NAME = 'arabic-lesson-prep-v3'
 const urlsToCache = [
   '/',
   '/index.html',
