@@ -65,6 +65,14 @@ export const Snd={
    case'beep':this.tone(760,t,.09,'sine',.1);break;
    case'ignite':this.noise(t,2.2,.5,100,1800);this.tone(55,t,2.2,'sawtooth',.12,120);break;
    case'win':[392,523,659,784,1046,1318].forEach((f,i)=>this.tone(f,t+i*.14,.9,'triangle',.18));break;
+   case'shoot':this.tone(1300,t,.1,'square',.05,320);break;
+   case'boom':this.noise(t,.6,.6,1200,60);this.tone(110,t,.4,'sawtooth',.22,38);break;
+   case'tick':this.tone(520,t,.05,'square',.05,380);break;
+   case'bosshit':this.tone(170,t,.14,'square',.09,90);this.noise(t,.12,.2,800,200);break;
+   case'graze':this.noise(t,.28,.28,3200,600);this.tone(900,t,.12,'sine',.05,1500);break;
+   case'dash':this.noise(t,.4,.32,300,3200);break;
+   case'combo':this.tone(740,t,.1,'triangle',.12);this.tone(1110,t+.07,.14,'triangle',.12);break;
+   case'orb':this.tone(660,t,.2,'triangle',.14,990);break;
    case'crash':this.noise(t,1.4,.8,1800,60);this.tone(90,t,1.2,'sawtooth',.3,30);break;
   }}
 };
