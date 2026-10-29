@@ -70,3 +70,18 @@ export function cartoonRockTexture(seed,size=256){
    x.fillStyle='rgba(255,255,255,.55)';x.beginPath();x.ellipse(cx+ox-rd*.18,cy-rd*.2,rd*.5,rd*.35,0,0,6.283);x.fill()}}
  for(let k=0;k<30;k++){x.fillStyle='rgba(60,30,110,.18)';x.beginPath();x.arc(r()*size,r()*size,2+r()*5,0,6.283);x.fill()}
  const tx=new THREE.CanvasTexture(c);tx.colorSpace=THREE.SRGBColorSpace;tx.wrapS=tx.wrapT=THREE.RepeatWrapping;return tx}
+
+/* نسيج صخري فيزيائي: لون + ارتفاع + عروق متوهجة */
+export function rockPBR(seed,size=384){
+ const mk=()=>{const c=document.createElement('canvas');c.width=c.height=size;return c};
+ const cA=mk(),cE=mk();const xa=cA.getContext('2d'),xe=cE.getContext('2d');const ia=xa.createImageData(size,size),ie=xe.createImageData(size,size);
+ for(let j=0;j<size;j++)for(let i=0;i<size;i++){
+  const u=i/size*6.2832,w=Math.cos(u)*1.3,z=Math.sin(u)*1.3,y=j/size*3.2+seed;
+  const n=fbm3(w+seed,y,z,6),m=fbm3(w*4+9,y*4,z*4,4),k=.42+n*.85+(m-.5)*.3;
+  const r1=1-Math.abs(fbm3(w*3.2+seed*2,y*3.2,z*3.2,5)*2-1);const vein=Math.pow(Math.max(0,r1-.82)/.18,1.6);
+  const p=(j*size+i)*4;const g=Math.min(255,255*k);ia.data[p]=g;ia.data[p+1]=g*.96;ia.data[p+2]=g*.92;ia.data[p+3]=255;
+  const e=Math.min(255,vein*255);ie.data[p]=e;ie.data[p+1]=e;ie.data[p+2]=e;ie.data[p+3]=255}
+ xa.putImageData(ia,0,0);xe.putImageData(ie,0,0);
+ const a=new THREE.CanvasTexture(cA);a.colorSpace=THREE.SRGBColorSpace;a.wrapS=a.wrapT=THREE.RepeatWrapping;a.anisotropy=4;
+ const e=new THREE.CanvasTexture(cE);e.colorSpace=THREE.SRGBColorSpace;e.wrapS=e.wrapT=THREE.RepeatWrapping;
+ return {a,e}}

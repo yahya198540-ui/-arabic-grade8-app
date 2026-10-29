@@ -74,18 +74,31 @@ export function flameMaterial(){
   float a=(1.-l)*(1.-l)*fl;gl_FragColor=vec4(c*3.*uPow,a*uPow);}`});
 }
 export const FinalPass={
- uniforms:{tDiffuse:{value:null},uTime:{value:0},uAberr:{value:.0015},uVig:{value:.55},uFlash:{value:0},uFlashCol:{value:new THREE.Color(1,1,1)},uDamage:{value:0}},
+ uniforms:{tDiffuse:{value:null},uTime:{value:0},uAberr:{value:.0015},uVig:{value:.55},uFlash:{value:0},uFlashCol:{value:new THREE.Color(1,1,1)},uDamage:{value:0},uBlur:{value:0},uSat:{value:1.18},uCon:{value:1.06}},
  vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
- fragmentShader:`uniform sampler2D tDiffuse;uniform float uTime;uniform float uAberr;uniform float uVig;uniform float uFlash;uniform vec3 uFlashCol;uniform float uDamage;varying vec2 vUv;
- void main(){vec2 uv=vUv;vec2 c=uv-.5;float r=dot(c,c);vec2 off=c*(uAberr*(.4+r*3.));
-  vec3 col=vec3(texture2D(tDiffuse,uv+off).r,texture2D(tDiffuse,uv).g,texture2D(tDiffuse,uv-off).b);
-  col*=1.-uVig*.5*smoothstep(.2,.7,r*1.5);
-  float g=fract(sin(dot(uv*vec2(1731.,1113.)+fract(uTime)*91.,vec2(12.9898,78.233)))*43758.5453);col+=(g-.5)*.0;
-  col=mix(col,uFlashCol,uFlash);col+=vec3(.95,.04,.06)*uDamage*smoothstep(.05,.55,r*2.2);gl_FragColor=vec4(col,1.);}`
+ fragmentShader:`uniform sampler2D tDiffuse;uniform float uTime;uniform float uAberr;uniform float uVig;uniform float uFlash;uniform vec3 uFlashCol;uniform float uDamage;uniform float uBlur;uniform float uSat;uniform float uCon;varying vec2 vUv;
+ void main(){vec2 uv=vUv;vec2 c=uv-.5;float r=dot(c,c);vec2 off=c*(uAberr*(.4+r*3.));vec3 col=vec3(0.);
+  for(int i=0;i<6;i++){float k=float(i)/5.;vec2 o=c*uBlur*k;col+=vec3(texture2D(tDiffuse,uv-o+off).r,texture2D(tDiffuse,uv-o).g,texture2D(tDiffuse,uv-o-off).b)/6.;}
+  float l=dot(col,vec3(.2126,.7152,.0722));col=mix(vec3(l),col,uSat);col=(col-.18)*uCon+.18;
+  col+=vec3(-.012,.004,.022)*(1.-smoothstep(0.,.5,l));col+=vec3(.035,.014,-.01)*smoothstep(.6,2.,l);
+  col*=1.-uVig*.55*smoothstep(.12,.7,r*1.5);
+  float g=fract(sin(dot(uv*vec2(1731.,1113.)+fract(uTime)*91.,vec2(12.9898,78.233)))*43758.5453);col+=(g-.5)*.012;
+  col=mix(col,uFlashCol*1.6,uFlash);col+=vec3(.95,.04,.06)*uDamage*smoothstep(.05,.55,r*2.2);gl_FragColor=vec4(max(col,0.),1.);}`
 };
-
 const _om={};
 export function outlineMaterial(t=.05,c=0x2a1b5a){const k=t+'_'+c;if(_om[k])return _om[k];
  return _om[k]=new THREE.ShaderMaterial({side:THREE.BackSide,uniforms:{uT:{value:t},uC:{value:new THREE.Color(c)}},fog:false,
  vertexShader:`uniform float uT;void main(){gl_Position=projectionMatrix*modelViewMatrix*vec4(position+normal*uT,1.);}`,
  fragmentShader:`uniform vec3 uC;void main(){gl_FragColor=vec4(uC,1.);}`})}
+
+export function skyMaterial(){
+ return new THREE.ShaderMaterial({side:THREE.BackSide,depthWrite:false,fog:false,uniforms:{uTop:{value:new THREE.Color(.02,.03,.12)},uBot:{value:new THREE.Color(.12,.1,.4)},uTint:{value:new THREE.Color(.2,.35,1)},uTint2:{value:new THREE.Color(.9,.25,.75)}},
+ vertexShader:`varying vec3 vD;void main(){vD=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+ fragmentShader:`uniform vec3 uTop;uniform vec3 uBot;uniform vec3 uTint;uniform vec3 uTint2;varying vec3 vD;${NOISE_GLSL}
+ void main(){vec3 d=normalize(vD);vec3 base=mix(uBot,uTop,smoothstep(-.6,.9,d.y))*.55;
+  vec3 gn=normalize(vec3(.35,.82,.3));float b=dot(d,gn);float band=exp(-b*b*20.);float core=exp(-b*b*120.);
+  float dust=fbm(d*5.)*fbm(d*12.+3.);float n=fbm(d*3.+1.);
+  vec3 mw=mix(uTint2*.9,vec3(1.,.92,.8),n)*band*(.4+1.8*dust);mw*=smoothstep(.03,.3,dust+.22);mw+=vec3(1.,.85,.6)*core*n*.35;
+  float n1=smoothstep(.46,.86,fbm(d*2.1+7.));float n2=smoothstep(.5,.88,fbm(d*2.7+19.));float n3=smoothstep(.55,.9,fbm(d*4.4+3.));vec3 neb=uTint*n1*n1*1.5+uTint2*n2*n2*1.3+mix(uTint,uTint2,.5)*n3*.7;
+  gl_FragColor=vec4(base*.32+mw*.42+neb*.36,1.);}`});
+}

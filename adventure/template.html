@@ -139,47 +139,27 @@ h1{margin:6px 0 6px;font-size:clamp(30px,6.4vw,56px);font-weight:900;line-height
 #start .tips{display:none;position:absolute;left:0;right:0;bottom:1.2vh;margin:0;z-index:3}#start .tips span{background:rgba(42,27,90,.55);border:0;color:#fff;font-weight:700;font-size:12px}
 @media(max-width:700px){#start .tips{display:none}}
 
-/* ===== أسلوب كرتوني موحّد (HUD + حاسوب المركبة) ===== */
-:root{--ink:#2a1b5a}
-.glass{background:linear-gradient(#7a56e8,#5a38c4);border:4px solid var(--ink);border-radius:18px;box-shadow:0 5px 0 #1a0f3e;backdrop-filter:none;-webkit-backdrop-filter:none;color:#fff}
-.hb{font-weight:900;text-shadow:0 2px 0 var(--ink)}
-#shield i{height:12px;border-radius:6px;transform:none;background:rgba(0,0,0,.25);border:2px solid var(--ink)}
-#shield i.on{background:linear-gradient(#ff9ab8,#ff3d71);box-shadow:none}
-#shield.low i.on{background:linear-gradient(#ffd27a,#ff7a1a);animation:pl .6s infinite}
-.nd{border:3px solid var(--ink);background:#c9b8ff}.nd.done{background:#ffd23f;box-shadow:0 0 0 2px #fff6a8 inset}.nd.cur{background:#5eead4;box-shadow:none}
-.sep{background:var(--ink)}
-#kcells i{border:2px solid var(--ink);background:#c9b8ff;border-radius:4px}#kcells i.on{background:linear-gradient(#fff3a0,#ffc928);box-shadow:none}
-.ib{background:linear-gradient(#7a56e8,#5a38c4);border:4px solid var(--ink);box-shadow:0 5px 0 #1a0f3e;border-radius:14px}
-#warns .w{background:#ff3d71;filter:drop-shadow(0 3px 0 var(--ink))}
-#hint{font-weight:800}
-/* حاسوب المركبة */
-#frame{box-shadow:inset 0 0 0 10px var(--ink),inset 0 0 0 16px #7a56e8,inset 0 -120px 120px -60px rgba(40,10,100,.5)}
-#term{background:linear-gradient(180deg,#8d6bff,#5a38c4);border:6px solid var(--ink);border-radius:28px 28px 14px 14px;box-shadow:0 8px 0 #1a0f3e,0 -6px 40px rgba(255,255,255,.18);backdrop-filter:none;transform:perspective(1000px) rotateX(4deg)}
-#term::before{background:none}#term::after{display:none}
-#qhead{color:#fff;font-weight:900;text-shadow:0 2px 0 var(--ink)}#qhead .tg{background:var(--ink);border:0;color:#ffe27a}
-#hintBtn{background:#ffd23f;color:var(--ink);border:3px solid var(--ink);box-shadow:0 3px 0 #b9770a;font-weight:900}
-#sentence{background:linear-gradient(#fffbe0,#ffefa0);color:var(--ink);border:4px solid var(--ink);border-radius:18px;text-shadow:none;box-shadow:0 5px 0 #b9770a;font-weight:900}
-#qprompt{color:#fff;font-weight:900;text-shadow:0 2px 0 var(--ink)}
-.opt{color:var(--ink);font-weight:900;border:4px solid var(--ink);border-radius:20px;box-shadow:0 6px 0 #1a0f3e}
-.opt:nth-child(1){background:linear-gradient(#ffc2d4,#ff6f9a)}.opt:nth-child(2){background:linear-gradient(#b8f4ff,#4fd1ff)}.opt:nth-child(3){background:linear-gradient(#e0d0ff,#a98bff)}
-.opt .lt{background:var(--ink);color:#fff;border:0;border-radius:50%}
-.opt:hover{border-color:var(--ink);filter:brightness(1.08);transform:translateY(-2px);box-shadow:0 8px 0 #1a0f3e}
-.opt:active{transform:translateY(4px);box-shadow:0 2px 0 #1a0f3e}
-.opt.good{background:linear-gradient(#c9ffd9,#3ddc97)!important;border-color:var(--ink)!important;box-shadow:0 6px 0 #14804a,0 0 30px #7dffbf!important}.opt.good .lt{background:#14804a}
-.opt.bad{background:linear-gradient(#ffc2c2,#ff5d6e)!important;border-color:var(--ink)!important}.opt.bad .lt{background:#a3203a}
-#fb{font-weight:800;border:3px dashed rgba(255,255,255,.55)}#fb.good{background:rgba(61,220,151,.35);color:#fff;border-color:#b8ffd6}#fb.bad{background:rgba(255,77,109,.35);color:#fff;border-color:#ffd0d8}#fb.hint{background:rgba(255,210,63,.3);color:#fff;border-color:#ffe27a}
-/* العناوين السينمائية */
-#cine .t{background:none;-webkit-background-clip:initial;background-clip:initial;color:#ffd23f;-webkit-text-stroke:clamp(5px,1vw,12px) var(--ink);paint-order:stroke fill;text-shadow:0 clamp(4px,.7vw,8px) 0 var(--ink);filter:none}
-#cine .k{color:#fff;text-shadow:0 3px 0 var(--ink);letter-spacing:4px}
-#cine .s{color:#fff;font-weight:800;text-shadow:0 3px 0 var(--ink)}
-#cine.show .t{animation:ti2 1.2s .35s forwards}@keyframes ti2{from{transform:translateY(20px) scale(.9) rotate(-2deg)}60%{transform:scale(1.06) rotate(1deg)}to{opacity:1;transform:none}}
-#count{color:#ffd23f;-webkit-text-stroke:clamp(8px,2vw,22px) var(--ink);paint-order:stroke fill;text-shadow:0 10px 0 var(--ink)}
-.card{background:linear-gradient(160deg,#7a56e8,#4a2ab0);border:6px solid var(--ink);box-shadow:0 10px 0 #1a0f3e;backdrop-filter:none}
-.card h1{background:none;-webkit-background-clip:initial;background-clip:initial;color:#ffd23f;-webkit-text-stroke:8px var(--ink);paint-order:stroke fill;filter:none}
-.card p{color:#fff}
-.btn{border:5px solid var(--ink);color:var(--ink);background:linear-gradient(#fff3a0,#ffc928);box-shadow:0 8px 0 #b9770a}
-.rows div{background:rgba(0,0,0,.25);border:3px solid var(--ink)}.rows .ok{background:#3ddc97;color:#04210f}.rows .no{background:#ffd23f;color:#3a2800}
-.ring b{color:#ffd23f;-webkit-text-stroke:6px var(--ink);paint-order:stroke fill}
+/* ===== لمسات الواجهة العصرية ===== */
+.glass{background:linear-gradient(180deg,rgba(24,18,70,.62),rgba(10,10,36,.62));border:1px solid rgba(160,190,255,.4);border-radius:16px;box-shadow:0 0 30px rgba(120,160,255,.12) inset,0 10px 30px rgba(0,0,0,.4)}
+#shield i.on{background:linear-gradient(90deg,#ff6fa8,#ff9ad0);box-shadow:0 0 10px #ff6fa8}
+.nd.done{background:#ffc94d;border-color:#ffe9a8;box-shadow:0 0 12px #ffc94d}.nd.cur{border-color:#6ee7ff;box-shadow:0 0 12px #6ee7ff}
+#term{background:linear-gradient(180deg,rgba(30,34,96,.82),rgba(10,10,40,.9));border:1px solid rgba(150,200,255,.7);box-shadow:0 0 0 4px rgba(6,8,30,.9),0 0 0 5px rgba(150,200,255,.35),0 -10px 70px rgba(110,160,255,.4),0 0 60px rgba(150,200,255,.1) inset}
+.opt:nth-child(1){background:linear-gradient(90deg,rgba(255,90,160,.32),rgba(120,40,120,.36));border-color:rgba(255,130,190,.7)}
+.opt:nth-child(2){background:linear-gradient(90deg,rgba(60,190,255,.32),rgba(20,80,140,.36));border-color:rgba(110,220,255,.7)}
+.opt:nth-child(3){background:linear-gradient(90deg,rgba(150,110,255,.34),rgba(60,40,140,.38));border-color:rgba(190,160,255,.7)}
+.opt:hover{filter:brightness(1.25)}
+.opt.good{background:linear-gradient(90deg,rgba(30,190,120,.6),rgba(20,110,80,.6))!important}
+.opt.bad{background:linear-gradient(90deg,rgba(210,40,80,.55),rgba(120,20,40,.55))!important}
+.card{background:linear-gradient(160deg,rgba(24,30,80,.8),rgba(8,10,30,.85));border:1px solid rgba(150,200,255,.5);box-shadow:0 0 80px rgba(100,150,255,.2),0 30px 80px rgba(0,0,0,.6)}
+.btn{border:0;color:#04101f;background:linear-gradient(135deg,#bff3ff,#6ee7ff 50%,#59b6ff);box-shadow:0 10px 30px rgba(80,190,255,.45)}
+.rows .ok{background:rgba(61,220,151,.18);color:#fff}.rows .no{background:rgba(255,184,77,.14);color:#fff}
+#cine .t{color:#fff;-webkit-text-stroke:0;paint-order:normal;text-shadow:0 0 40px rgba(130,190,255,.7),0 6px 24px rgba(0,0,0,.6)}
+#cine .k{color:#8fe9ff;letter-spacing:6px}#cine .s{color:#ffd27a}
+#count{color:#fff;-webkit-text-stroke:0;text-shadow:0 0 60px rgba(110,231,255,.9)}
+.ring b{color:#fff;-webkit-text-stroke:0;text-shadow:0 0 22px rgba(110,231,255,.7)}
+.card h1{color:#fff;-webkit-text-stroke:0;text-shadow:0 0 30px rgba(110,231,255,.6)}
+#target{position:fixed;left:50%;top:max(64px,9vh);transform:translateX(-50%);padding:6px 18px;font-weight:800;font-size:clamp(13px,1.9vw,17px);opacity:0;transition:opacity .5s;white-space:nowrap;pointer-events:none}
+#target.show{opacity:1}
 </style>
 </head>
 <body>
@@ -196,6 +176,7 @@ h1{margin:6px 0 6px;font-size:clamp(30px,6.4vw,56px);font-weight:900;line-height
  <div id="warns"></div>
  <div id="bl"><div id="spd">VEL 0 m/s</div><div id="stg"></div></div>
  <div id="hint" class="glass"></div>
+ <div id="target" class="glass"></div>
 </div>
 
 <div id="bars"><div class="t"></div><div class="b"></div></div>
