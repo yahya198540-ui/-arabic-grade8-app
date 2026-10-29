@@ -60,3 +60,13 @@ export function labelTexture(text,color='#ffffff',size=256){
  x.font=`900 ${size*.62}px "Segoe UI",Tahoma,"Noto Sans Arabic",sans-serif`;x.textAlign='center';x.textBaseline='middle';
  x.shadowColor=color;x.shadowBlur=24;x.fillStyle=color;x.fillText(text,size/2,size/2+size*.03);
  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return t}
+
+/* صخرة كرتونية: لون مسطح فاتح + حُفَر بحواف */
+export function cartoonRockTexture(seed,size=256){
+ const c=document.createElement('canvas');c.width=c.height=size;const x=c.getContext('2d'),r=rng(seed);
+ x.fillStyle='#ffffff';x.fillRect(0,0,size,size);
+ for(let k=0;k<14;k++){const cx=r()*size,cy=r()*size,rd=10+r()*30;
+  for(const ox of[-size,0,size]){x.fillStyle='rgba(60,30,110,.22)';x.beginPath();x.ellipse(cx+ox,cy,rd,rd*.78,0,0,6.283);x.fill();x.strokeStyle='rgba(60,30,110,.55)';x.lineWidth=4;x.stroke();
+   x.fillStyle='rgba(255,255,255,.55)';x.beginPath();x.ellipse(cx+ox-rd*.18,cy-rd*.2,rd*.5,rd*.35,0,0,6.283);x.fill()}}
+ for(let k=0;k<30;k++){x.fillStyle='rgba(60,30,110,.18)';x.beginPath();x.arc(r()*size,r()*size,2+r()*5,0,6.283);x.fill()}
+ const tx=new THREE.CanvasTexture(c);tx.colorSpace=THREE.SRGBColorSpace;tx.wrapS=tx.wrapT=THREE.RepeatWrapping;return tx}

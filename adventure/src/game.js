@@ -26,7 +26,7 @@ function boot(){
  createGfx($('gl'));initResources();scene=gfx.scene;camera=gfx.camera;
  world=new THREE.Group();scene.add(world);
  ship=makeShip();scene.add(ship);
- moonMat=planetMaterial(1);
+ moonMat=planetMaterial(4);
  // بوابات
  const cols=[0x4fd8ff,0x4fd8ff,0x4fd8ff,0xffa94d,0xffa94d,0xffa94d,0xffa94d,0xff4d6d,0xff4d6d,0xff4d6d];
  const lv=buildLevel();
@@ -47,7 +47,7 @@ function buildEffects(){
  P.pts=new THREE.Points(g,new THREE.PointsMaterial({size:.5,map:R.glow,sizeAttenuation:true,vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false}));P.pts.frustumCulled=false;scene.add(P.pts);
  // غبار فضائي ثابت لإحساس السرعة
  const n=Quality.dust,dp=new Float32Array(n*3);for(let i=0;i<n;i++){dp[i*3]=rnd(-48,48);dp[i*3+1]=rnd(-30,30);dp[i*3+2]=-rnd(-30,230)}
- const dg=new THREE.BufferGeometry();dust_attr(dg,dp);dust=new THREE.Points(dg,new THREE.PointsMaterial({size:.2,map:R.glow,color:0xbfd8ff,sizeAttenuation:true,transparent:true,opacity:.7,depthWrite:false,blending:THREE.AdditiveBlending,fog:false}));dust.frustumCulled=false;scene.add(dust);
+ const dg=new THREE.BufferGeometry();dust_attr(dg,dp);dust=new THREE.Points(dg,new THREE.PointsMaterial({size:.2,map:R.glow,color:0xffffff,sizeAttenuation:true,transparent:true,opacity:.85,depthWrite:false,blending:THREE.AdditiveBlending,fog:false}));dust.frustumCulled=false;scene.add(dust);
  // خطوط السرعة
  const N=150;lineData=[];for(let i=0;i<N;i++){const a=Math.random()*6.283,r=rnd(5,38);lineData.push({x:Math.cos(a)*r,y:Math.sin(a)*r*.7,z:-rnd(0,250),l:rnd(.6,1.4)})}
  const lg=new THREE.BufferGeometry();lineAttr=new THREE.BufferAttribute(new Float32Array(N*6),3);lg.setAttribute('position',lineAttr);
@@ -110,7 +110,7 @@ function resetStream(){
 function advanceStream(){
  while(hi<streamObjs.length&&streamObjs[hi].d<S.dist+AHEAD){const o=streamObjs[hi];if(o.d>=S.dist-30&&!o.got)spawn(o);hi++}
  while(lo<hi&&streamObjs[lo].d<S.dist-30){despawn(streamObjs[lo]);lo++}
- for(const o of bigs){if(!o.m&&o.d-S.dist<BIG_AHEAD&&o.d>S.dist-120){const m=new THREE.Mesh(new THREE.SphereGeometry(o.r,64,48),moonMat);m.position.set(o.x,o.y,-o.d);o.m=m;world.add(m)}else if(o.m&&o.d<S.dist-300)despawn(o)}
+ for(const o of bigs){if(!o.m&&o.d-S.dist<BIG_AHEAD&&o.d>S.dist-120){const m=new THREE.Mesh(new THREE.SphereGeometry(o.r,64,48),moonMat);m.position.set(o.x,o.y,-o.d);m.rotation.y=.4;o.m=m;world.add(m)}else if(o.m&&o.d<S.dist-300)despawn(o)}
 }
 
 /* ================= الإدخال ================= */
@@ -344,8 +344,8 @@ function updateCamera(dt){
  else if(S.camMode==='orbit'){const a=S.time*.12+S.cine.t*.08;const r=14-S.cine.t*.3;tmpP.set(Math.sin(a)*r,3.4+Math.sin(S.time*.4)*.6,z+Math.cos(a)*r);tmpL.set(0,.4,z);kxy=kz=3.2;lk=4}
  else if(S.camMode==='endorbit'){const c=station.position,a=S.cine.t*.2+.6;tmpP.set(c.x+Math.sin(a)*150,c.y+28+Math.sin(S.cine.t*.3)*8,c.z+Math.cos(a)*150+60);tmpL.copy(c);kxy=kz=1.6;lk=2.2}
  else{ // مطاردة
-  const qb=S.qBlend;tmpP.set(S.x*.55,S.y*.55+2.7-qb*1.2,z+9.6-qb*1.6);tmpL.set(S.x*.4,S.y*.4+.4-qb*9.5,z-18);
-  if(S.mode==='question'){S.qBlend=Math.min(1,S.qBlend+dt*1.1)}else S.qBlend=Math.max(0,S.qBlend-dt*1.6)}
+  const qb=S.qBlend;tmpP.set(S.x*.55,S.y*.55+3.5-qb*1.2,z+12.2-qb*1.8);tmpL.set(S.x*.4,S.y*.4+.2-qb*12,z-16);
+  if(S.mode==='question'){S.qBlend=Math.min(1,S.qBlend+dt*2)}else S.qBlend=Math.max(0,S.qBlend-dt*1.6)}
  const fx=1-Math.exp(-dt*kxy),fz=1-Math.exp(-dt*kz);
  camera.position.x+=(tmpP.x-camera.position.x)*fx;camera.position.y+=(tmpP.y-camera.position.y)*fx;camera.position.z+=(tmpP.z-camera.position.z)*fz;
  lookT.lerp(tmpL,1-Math.exp(-dt*lk));
@@ -363,7 +363,7 @@ function updateShip(dt){
  ship.userData.body.rotation.set(S.pitch,-S.vx*.012,S.bank);ship.position.y+=hover;
  const u=ship.userData;const sp=S.speed/BASE;
  const target=S.mode==='cine'&&S.cine&&S.cine.type==='launch'?S.flameP:clamp(.35+sp*.8+S.boost*.7,0,1.6);S.flameP+=(target-S.flameP)*Math.min(1,dt*5);
- u.fm.uniforms.uTime.value=S.time;u.fm.uniforms.uPow.value=S.flameP*.55;u.flames.forEach((f,i)=>{if(f.isSprite)f.scale.setScalar(1.6+S.flameP*1.6);else f.scale.set(.8,.8,1.2+S.flameP*2.4)});
+ u.fm.uniforms.uTime.value=S.time;u.fm.uniforms.uPow.value=S.flameP*.55;{const fk=1+.12*Math.sin(S.time*50);u.flames.forEach((f,i)=>{if(f.isSprite)f.scale.setScalar(1.5+S.flameP*1.1);else{const L=(i===0?.8:.55)+S.flameP*(i===0?1.5:1.0);f.scale.set(1,1,L*fk)}})}
  u.light.intensity=10+S.flameP*30;
  u.sm.uniforms.uTime.value=S.time;u.sm.uniforms.uHit.value=Math.max(0,u.sm.uniforms.uHit.value-dt*1.8);u.sm.uniforms.uLevel.value=S.shield/3;
  ship.visible=S.mode!=='crash'&&S.mode!=='end'||S.mode==='end';if(S.mode==='crash')ship.visible=false;
@@ -406,7 +406,7 @@ function updateFx(dt){
 export function step(dt){
  S.time+=dt;
  if(S.envT<1){S.envT=Math.min(1,S.envT+dt/S.envDur);lerpEnv(S.envFrom,S.envTo,ease(S.envT))}
- R.rockMat.forEach(m=>m.color.copy(envNow.rock));
+ R.rockMat.forEach(m=>m.color.copy(envNow.rock).multiply(m.userData.base));
  S.shake=Math.max(0,S.shake-dt);if(S.mode!=='cine'||!S.cine||S.cine.type!=='stage')S.flash=Math.max(0,S.flash-dt*(S.mode==='cine'?1.2:2.2));
  switch(S.mode){
   case'play':playStep(dt);break;
