@@ -291,7 +291,7 @@ function save(){const d={res:S.res,cells:S.cells,v:1};try{sessionStorage.setItem
 function load(){try{const j=JSON.parse(sessionStorage.getItem(KEY)||'null');if(j&&Array.isArray(j.res))return j}catch(e){}const s=Scorm.getSuspend();return s&&Array.isArray(s.res)?s:null}
 function clear(){try{sessionStorage.removeItem(KEY)}catch(e){}}
 function offerResume(){const sv=load();const n=sv?sv.res.filter(Boolean).length:0;
- if(n>0&&n<10){const b=document.createElement('button');b.className='btn alt';b.textContent=`متابعة من السؤال ${toAr(n+1)}`;b.onclick=()=>beginRun(n);$('startBtns').prepend(b);$('goBtn').textContent='ابدأ من جديد'}}
+ if(n>0&&n<10){const b=document.createElement('button');b.className='go alt';b.textContent=`متابعة من السؤال ${toAr(n+1)}`;b.onclick=()=>beginRun(n);$('startBtns').prepend(b);$('goBtn').textContent='ابدأ من جديد'}}
 
 function showEnd(){
  S.mode='end';$('hud').classList.add('hidden');$('bars').classList.remove('on');$('cine').classList.add('hidden');$('warns').innerHTML='';
@@ -317,9 +317,18 @@ function beginRun(resumeN){
   S.res.forEach((r,i)=>{if(r)$('kc'+i).classList.add('on')});startCine('resume');
  }else{buildHud();setStageEnv(0,0);updHud();S.dist=0;S.mode='play';startCine('launch')}
 }
+function buildIntro(){
+ const sky=document.querySelector('#start .sky');for(let i=0;i<110;i++){const d=document.createElement('i');d.className='st';d.style.left=Math.random()*100+'%';d.style.top=Math.random()*85+'%';const z=Math.random()*5+2;d.style.width=d.style.height=z+'px';d.style.animationDelay=(Math.random()*-3)+'s';d.style.animationDuration=(1.6+Math.random()*2.4)+'s';sky.append(d)}
+ const fit=()=>{$('scene').setAttribute('viewBox',innerWidth/innerHeight<.9?'300 -40 980 960':'0 0 1600 900')};fit();addEventListener('resize',fit);
+}
+function liftoffIntro(done){
+ const st=$('start');if(st.classList.contains('go'))return;st.classList.add('go');Snd.init();if(Snd.ctx&&Snd.ctx.state==='suspended')Snd.ctx.resume();Snd.sfx('ignite');
+ setTimeout(()=>st.classList.add('out'),1500);setTimeout(()=>{done();st.classList.remove('go','out');st.classList.add('hidden')},2300);
+}
 function wireUi(){
+ buildIntro();
  wireInput();
- $('goBtn').onclick=()=>beginRun(0);
+ $('goBtn').onclick=()=>liftoffIntro(()=>beginRun(0));
  $('againBtn').onclick=()=>{$('end').classList.add('hidden');beginRun(0)};
  $('muteBtn').onclick=()=>{Snd.setMute(!Snd.muted);$('muteBtn').textContent=Snd.muted?'🔇':'🔊'};
  $('pauseBtn').onclick=()=>{paused=!paused;$('pauseBtn').textContent=paused?'▶':'⏸';if(Snd.ctx)paused?Snd.ctx.suspend():Snd.ctx.resume()};
