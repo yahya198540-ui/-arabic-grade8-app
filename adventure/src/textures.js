@@ -85,3 +85,22 @@ export function rockPBR(seed,size=384){
  const a=new THREE.CanvasTexture(cA);a.colorSpace=THREE.SRGBColorSpace;a.wrapS=a.wrapT=THREE.RepeatWrapping;a.anisotropy=4;
  const e=new THREE.CanvasTexture(cE);e.colorSpace=THREE.SRGBColorSpace;e.wrapS=e.wrapT=THREE.RepeatWrapping;
  return {a,e}}
+
+/* سحابة سديمية ناعمة (تُلوَّن بمادة السبرايت) */
+export function cloudTexture(seed,size=128){
+ const c=document.createElement('canvas');c.width=c.height=size;const x=c.getContext('2d'),im=x.createImageData(size,size);
+ for(let j=0;j<size;j++)for(let i=0;i<size;i++){const u=i/size*2-1,v=j/size*2-1,d=Math.sqrt(u*u+v*v);
+  const n=fbm3(i/size*3+seed,j/size*3,seed*.7,5);const a=Math.max(0,1-d)**1.6*Math.min(1,n*1.9);const p=(j*size+i)*4;
+  im.data[p]=255;im.data[p+1]=255;im.data[p+2]=255;im.data[p+3]=Math.min(255,a*255)}
+ x.putImageData(im,0,0);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return t}
+/* نوافذ مضيئة لحلقة المحطة */
+export function windowTexture(){
+ const w=1024,h=64,c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.fillStyle='#10162e';x.fillRect(0,0,w,h);
+ const r=rng(9);for(let i=0;i<w/16;i++)for(let j=0;j<3;j++){const on=r()>.18;x.fillStyle=on?(r()>.8?'#7fe4ff':'#ffd08a'):'#1b2140';x.fillRect(i*16+3,6+j*19,10,11)}
+ const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=THREE.RepeatWrapping;return t}
+export function padTexture(){
+ const s=512,c=document.createElement('canvas');c.width=c.height=s;const x=c.getContext('2d');x.fillStyle='#262e4a';x.fillRect(0,0,s,s);
+ x.strokeStyle='#ff9a2a';x.lineWidth=14;x.strokeRect(14,14,s-28,s-28);x.strokeStyle='#4dd8ff';x.lineWidth=6;x.strokeRect(34,34,s-68,s-68);
+ x.fillStyle='#ffffff';x.font='900 300px sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText('H',s/2,s/2+16);
+ x.fillStyle='rgba(255,154,42,.9)';for(let i=0;i<8;i++){x.fillRect(60+i*54,40,26,10);x.fillRect(60+i*54,s-50,26,10)}
+ const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t}

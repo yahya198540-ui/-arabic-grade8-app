@@ -2,7 +2,8 @@ import {build} from 'esbuild';import fs from 'fs';import path from 'path';import
 const here=path.dirname(new URL(import.meta.url).pathname);
 const out=await build({entryPoints:[path.join(here,'src/main.js')],bundle:true,minify:true,format:'iife',charset:'utf8',write:false,target:'es2020',legalComments:'none'});
 let js=out.outputFiles[0].text.replace(/<\/script/gi,'<\\/script');
-const html=fs.readFileSync(path.join(here,'template.html'),'utf8').replace('<!--GAME_JS-->',()=>`<script>${js}</script>`);
+const hero='data:image/jpeg;base64,'+fs.readFileSync(path.join(here,'assets/hero.jpg')).toString('base64');
+const html=fs.readFileSync(path.join(here,'template.html'),'utf8').replaceAll('__HERO__',hero).replace('<!--GAME_JS-->',()=>`<script>${js}</script>`);
 const dist=path.join(here,'dist');fs.mkdirSync(dist,{recursive:true});
 fs.writeFileSync(path.join(dist,'index.html'),html);
 fs.writeFileSync(path.join(here,'../public/adventure.html'),html);

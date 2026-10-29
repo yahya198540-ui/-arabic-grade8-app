@@ -12,14 +12,16 @@ const mobile=/Android|iPhone|iPad|Mobi/i.test(navigator.userAgent)||Math.min(inn
 export const Quality=(()=>{const low=params.get('q')==='low'||mobile;return low?{pr:1,samples:0,stars:3500,bloomRes:.5,dust:260,low:true}:{pr:Math.min(window.devicePixelRatio||1,1.75),samples:4,stars:9000,bloomRes:1,dust:520,low:false}})();
 
 const V=(x,y,z)=>new THREE.Vector3(x,y,z).normalize();const C=(r,g,b)=>new THREE.Color(r,g,b);
+/* sunVis: موضع الشمس المرئية (أمام المركبة عند حافة الكوكب)، fillI: إضاءة تعبئة من الخلف */
 export const ENV=[
- {sun:V(.8,.42,.5),sunCol:C(1,.95,.86),sunI:3.3,hemi:C(.55,.7,1),hemiI:.55,rimA:C(1,.35,.7),rimB:C(.3,.7,1),fog:C(.05,.05,.2),fd:.0007,neb1:C(.2,.35,1),neb2:C(.9,.25,.75),top:C(.02,.03,.12),bot:C(.12,.1,.4),rock:C(.82,.78,.95),vein:C(.3,.85,1),ex:1.1,bloom:.45},
- {sun:V(-.72,.46,.55),sunCol:C(1,.86,.7),sunI:3.6,hemi:C(1,.62,.45),hemiI:.55,rimA:C(1,.3,.25),rimB:C(1,.75,.2),fog:C(.16,.05,.05),fd:.0009,neb1:C(1,.45,.12),neb2:C(.9,.1,.35),top:C(.08,.02,.05),bot:C(.4,.12,.1),rock:C(.98,.74,.58),vein:C(1,.45,.1),ex:1.12,bloom:.5},
- {sun:V(.25,.32,.92),sunCol:C(.92,.98,1),sunI:3.3,hemi:C(.4,.9,.85),hemiI:.55,rimA:C(.3,1,.8),rimB:C(.6,.4,1),fog:C(.02,.1,.12),fd:.0008,neb1:C(.1,.9,.75),neb2:C(.45,.3,1),top:C(.01,.05,.1),bot:C(.04,.3,.35),rock:C(.72,.88,.92),vein:C(.95,.3,.95),ex:1.1,bloom:.55}
+ {pSun:V(.35,.6,.72),sunVis:V(.34,.1,-.93),sunCol:C(1,.86,.62),sunI:3.0,fillI:.95,fillCol:C(.9,.95,1),hemi:C(.45,.62,1),hemiI:.5,rimA:C(1,.45,.7),rimB:C(.3,.7,1),fog:C(.04,.07,.2),fd:.0006,neb1:C(.15,.3,1),neb2:C(.6,.2,.9),top:C(.01,.02,.1),bot:C(.05,.12,.4),rock:C(.85,.82,.95),spiral:0,sunK:1,ex:1.1,bloom:.5},
+ {pSun:V(.6,.42,.62),sunVis:V(-.55,.32,-.77),sunCol:C(1,.72,.42),sunI:3.6,fillI:.85,fillCol:C(1,.82,.7),hemi:C(.55,.4,.85),hemiI:.55,rimA:C(1,.35,.3),rimB:C(.45,.5,1),fog:C(.1,.05,.08),fd:.0008,neb1:C(1,.45,.12),neb2:C(.7,.15,.4),top:C(.04,.02,.1),bot:C(.32,.12,.16),rock:C(1,.86,.7),spiral:0,sunK:1,ex:1.12,bloom:.55},
+ {pSun:V(-.25,.5,.82),sunVis:V(.2,.28,-.94),sunCol:C(.8,.82,1),sunI:2.2,fillI:.9,fillCol:C(.85,.8,1),hemi:C(.6,.45,1),hemiI:.7,rimA:C(.75,.3,1),rimB:C(.2,1,.9),fog:C(.05,.03,.18),fd:.0009,neb1:C(.3,.2,1),neb2:C(.15,.9,.9),top:C(.02,.01,.12),bot:C(.14,.05,.42),rock:C(.8,.75,1),spiral:1,sunK:0.18,ex:1.15,bloom:.7},
+ {pSun:V(.4,.55,.7),sunVis:V(.5,.25,-.82),sunCol:C(1,.95,.88),sunI:3.0,fillI:.95,fillCol:C(.9,.95,1),hemi:C(.5,.68,1),hemiI:.55,rimA:C(1,.5,.25),rimB:C(.3,.75,1),fog:C(.03,.07,.2),fd:.0006,neb1:C(.2,.4,1),neb2:C(.5,.3,.9),top:C(.01,.03,.12),bot:C(.06,.16,.45),rock:C(.85,.85,.95),spiral:.25,sunK:0.55,ex:1.1,bloom:.5}
 ];
 const cl=e=>{const o={};for(const k in e)o[k]=e[k].clone?e[k].clone():e[k];return o};
 export const envNow=cl(ENV[0]);
-export function lerpEnv(a,b,t){envNow.sun.copy(a.sun).lerp(b.sun,t).normalize();for(const k of['sunCol','hemi','rimA','rimB','fog','neb1','neb2','top','bot','rock','vein'])envNow[k].copy(a[k]).lerp(b[k],t);for(const k of['sunI','hemiI','fd','ex','bloom'])envNow[k]=a[k]+(b[k]-a[k])*t}
+export function lerpEnv(a,b,t){envNow.sunVis.copy(a.sunVis).lerp(b.sunVis,t).normalize();envNow.pSun.copy(a.pSun).lerp(b.pSun,t).normalize();for(const k of['sunCol','fillCol','hemi','rimA','rimB','fog','neb1','neb2','top','bot','rock'])envNow[k].copy(a[k]).lerp(b[k],t);for(const k of['sunI','fillI','hemiI','fd','ex','bloom','spiral','sunK'])envNow[k]=a[k]+(b[k]-a[k])*t}
 export const cloneEnv=cl;
 
 export const gfx={};
@@ -31,6 +33,7 @@ export function createGfx(canvas){
  const camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.5,14000);scene.add(camera);
  const sun=new THREE.DirectionalLight(0xfff2e0,3.3);scene.add(sun,sun.target);
  const hemi=new THREE.HemisphereLight(0x8cb4ff,0x201040,.55);scene.add(hemi);
+ const fill=new THREE.DirectionalLight(0xffffff,1.5);fill.position.set(-.25,.9,1);scene.add(fill);
  const rimA=new THREE.DirectionalLight(0xff59b0,.9);rimA.position.set(-.7,.3,.8);scene.add(rimA);
  const rimB=new THREE.DirectionalLight(0x4db8ff,.8);rimB.position.set(.8,-.3,.9);scene.add(rimB);
 
@@ -49,16 +52,16 @@ export function createGfx(canvas){
  // بيئة الانعكاسات من السماء نفسها
  {const pmrem=new THREE.PMREMGenerator(renderer);const es=new THREE.Scene();
   es.add(new THREE.Mesh(new THREE.SphereGeometry(60,32,20),(()=>{const m=skyMaterial();m.uniforms.uTop.value.set(.1,.12,.35);m.uniforms.uBot.value.set(.5,.25,.7);return m})()));
-  const s=new THREE.Mesh(new THREE.SphereGeometry(6,12,8),new THREE.MeshBasicMaterial({color:C(60,52,40)}));s.position.copy(ENV[0].sun).multiplyScalar(44);es.add(s);
+  const s=new THREE.Mesh(new THREE.SphereGeometry(6,12,8),new THREE.MeshBasicMaterial({color:C(60,52,40)}));s.position.copy(ENV[0].sunVis).multiplyScalar(44);es.add(s);
   for(const[x,y,z,col]of[[-30,10,20,C(8,2.5,6)],[30,-10,25,C(2,5,9)],[0,35,-20,C(5,6,9)]]){const c=new THREE.Mesh(new THREE.SphereGeometry(8,10,8),new THREE.MeshBasicMaterial({color:col}));c.position.set(x,y,z);es.add(c)}
   scene.environment=pmrem.fromScene(es,.03).texture;pmrem.dispose()}
 
  const rt=new THREE.WebGLRenderTarget(innerWidth*Quality.pr,innerHeight*Quality.pr,{type:THREE.HalfFloatType,samples:Quality.samples});
  const composer=new EffectComposer(renderer,rt);composer.setPixelRatio(Quality.pr);composer.setSize(innerWidth,innerHeight);
  composer.addPass(new RenderPass(scene,camera));
- const bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth*Quality.bloomRes,innerHeight*Quality.bloomRes),.5,.6,.9);composer.addPass(bloom);
+ const bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth*Quality.bloomRes,innerHeight*Quality.bloomRes),.5,.6,1.15);composer.addPass(bloom);
  const fin=new ShaderPass(FinalPass);composer.addPass(fin);composer.addPass(new OutputPass());
- Object.assign(gfx,{renderer,scene,camera,sun,hemi,rimA,rimB,sky,sunDisc,sunGlow,sunGlow2,bloom,fin,composer});
+ Object.assign(gfx,{renderer,scene,camera,sun,fill,hemi,rimA,rimB,sky,sunDisc,sunGlow,sunGlow2,bloom,fin,composer});
  addEventListener('resize',resize);resize();return gfx}
 function dotTex(){const s=64,c=document.createElement('canvas');c.width=c.height=s;const x=c.getContext('2d'),g=x.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.35,'rgba(255,255,255,.55)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,s,s);return new THREE.CanvasTexture(c)}
 function glow(){const s=256,c=document.createElement('canvas');c.width=c.height=s;const x=c.getContext('2d'),g=x.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2);
@@ -66,9 +69,17 @@ function glow(){const s=256,c=document.createElement('canvas');c.width=c.height=
 export function resize(){if(!gfx.renderer)return;const w=innerWidth,h=innerHeight;gfx.renderer.setSize(w,h,false);gfx.composer.setPixelRatio(Quality.pr);gfx.composer.setSize(w,h);
  gfx.camera.aspect=w/h;gfx.camera.updateProjectionMatrix();gfx.bloom.resolution.set(w*Quality.bloomRes,h*Quality.bloomRes)}
 export function applyEnv(){
- const e=envNow,g=gfx;g.sun.color.copy(e.sunCol);g.sun.intensity=e.sunI;g.sun.position.copy(e.sun).multiplyScalar(300);
- g.hemi.color.copy(e.hemi);g.hemi.intensity=e.hemiI;g.rimA.color.copy(e.rimA);g.rimB.color.copy(e.rimB);
+ const e=envNow,g=gfx;g.sun.color.copy(e.sunCol);g.sun.intensity=e.sunI;g.sun.position.copy(e.sunVis).multiplyScalar(300);
+ g.fill.color.copy(e.fillCol);g.fill.intensity=e.fillI;g.hemi.color.copy(e.hemi);g.hemi.intensity=e.hemiI;g.rimA.color.copy(e.rimA);g.rimB.color.copy(e.rimB);
  g.scene.fog.color.copy(e.fog);g.scene.fog.density=e.fd;g.renderer.toneMappingExposure=e.ex;
- const p=e.sun.clone().multiplyScalar(7800);g.sunDisc.position.copy(p);g.sunGlow.position.copy(p);g.sunGlow2.position.copy(p);
- const gm=g.sky.children[0].material.uniforms;gm.uTint.value.copy(e.neb1);gm.uTint2.value.copy(e.neb2);gm.uTop.value.copy(e.top);gm.uBot.value.copy(e.bot);
+ const p=e.sunVis.clone().multiplyScalar(7800);g.sunDisc.position.copy(p);g.sunGlow.position.copy(p);g.sunGlow2.position.copy(p);g.sunGlow.material.opacity=.9*e.sunK;g.sunGlow2.material.opacity=.3*e.sunK;g.sunDisc.visible=e.sunK>.3;
+ const gm=g.sky.children[0].material.uniforms;gm.uTint.value.copy(e.neb1);gm.uTint2.value.copy(e.neb2);gm.uTop.value.copy(e.top);gm.uBot.value.copy(e.bot);gm.uSpiral.value=e.spiral;
  g.bloom.strength=e.bloom}
+/* خفض/رفع دقة العرض تلقائيًّا للحفاظ على السلاسة (هدف ≈ 60 إطارًا) */
+let _acc=0,_n=0,_pr=null;
+export function adaptQuality(dt){
+ if(_pr===null)_pr=Quality.pr;_acc+=dt;_n++;
+ if(_acc>1.6){const avg=_acc/_n;_acc=0;_n=0;let np=_pr;
+  if(avg>.026&&_pr>.6)np=Math.max(.6,_pr-.2);else if(avg<.0185&&_pr<Quality.pr)np=Math.min(Quality.pr,_pr+.1);
+  if(Math.abs(np-_pr)>.01){_pr=np;gfx.renderer.setPixelRatio(np);gfx.composer.setPixelRatio(np);gfx.composer.setSize(innerWidth,innerHeight)}}
+}

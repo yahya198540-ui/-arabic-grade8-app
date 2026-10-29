@@ -64,7 +64,7 @@ export function shieldMaterial(){
  return new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{uHit:{value:0},uTime:{value:0},uLevel:{value:1}},
  vertexShader:`varying vec3 vN;varying vec3 vV;void main(){vN=normalize(normalMatrix*normal);vec4 mv=modelViewMatrix*vec4(position,1.);vV=normalize(-mv.xyz);gl_Position=projectionMatrix*mv;}`,
  fragmentShader:`uniform float uHit;uniform float uTime;uniform float uLevel;varying vec3 vN;varying vec3 vV;
- void main(){float f=1.-max(dot(normalize(vN),normalize(vV)),0.);float rim=smoothstep(.72,.9,f);float a=(rim*.28)*uLevel+uHit*(.25+f*.6);vec3 c=mix(vec3(.55,.95,1.),vec3(1.,.5,.4),uHit);gl_FragColor=vec4(c,a);}`});
+ void main(){float f=1.-max(dot(normalize(vN),normalize(vV)),0.);float rim=smoothstep(.72,.9,f);float a=(rim*.1)*uLevel+uHit*(.25+f*.6);vec3 c=mix(vec3(.55,.95,1.),vec3(1.,.5,.4),uHit);gl_FragColor=vec4(c,a);}`});
 }
 export function flameMaterial(){
  return new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,uniforms:{uTime:{value:0},uPow:{value:1}},
@@ -92,13 +92,16 @@ export function outlineMaterial(t=.05,c=0x2a1b5a){const k=t+'_'+c;if(_om[k])retu
  fragmentShader:`uniform vec3 uC;void main(){gl_FragColor=vec4(uC,1.);}`})}
 
 export function skyMaterial(){
- return new THREE.ShaderMaterial({side:THREE.BackSide,depthWrite:false,fog:false,uniforms:{uTop:{value:new THREE.Color(.02,.03,.12)},uBot:{value:new THREE.Color(.12,.1,.4)},uTint:{value:new THREE.Color(.2,.35,1)},uTint2:{value:new THREE.Color(.9,.25,.75)}},
+ return new THREE.ShaderMaterial({side:THREE.BackSide,depthWrite:false,fog:false,uniforms:{uTop:{value:new THREE.Color(.02,.03,.12)},uBot:{value:new THREE.Color(.12,.1,.4)},uTint:{value:new THREE.Color(.2,.35,1)},uTint2:{value:new THREE.Color(.9,.25,.75)},uSpiral:{value:0}},
  vertexShader:`varying vec3 vD;void main(){vD=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
- fragmentShader:`uniform vec3 uTop;uniform vec3 uBot;uniform vec3 uTint;uniform vec3 uTint2;varying vec3 vD;${NOISE_GLSL}
+ fragmentShader:`uniform vec3 uTop;uniform vec3 uBot;uniform vec3 uTint;uniform vec3 uTint2;uniform float uSpiral;varying vec3 vD;${NOISE_GLSL}
  void main(){vec3 d=normalize(vD);vec3 base=mix(uBot,uTop,smoothstep(-.6,.9,d.y))*.55;
   vec3 gn=normalize(vec3(.35,.82,.3));float b=dot(d,gn);float band=exp(-b*b*20.);float core=exp(-b*b*120.);
   float dust=fbm(d*5.)*fbm(d*12.+3.);float n=fbm(d*3.+1.);
   vec3 mw=mix(uTint2*.9,vec3(1.,.92,.8),n)*band*(.4+1.8*dust);mw*=smoothstep(.03,.3,dust+.22);mw+=vec3(1.,.85,.6)*core*n*.35;
   float n1=smoothstep(.46,.86,fbm(d*2.1+7.));float n2=smoothstep(.5,.88,fbm(d*2.7+19.));float n3=smoothstep(.55,.9,fbm(d*4.4+3.));vec3 neb=uTint*n1*n1*1.5+uTint2*n2*n2*1.3+mix(uTint,uTint2,.5)*n3*.7;
-  gl_FragColor=vec4(base*.32+mw*.42+neb*.36,1.);}`});
+  vec3 sp=vec3(0.);if(uSpiral>.01){vec3 c=normalize(vec3(.3,.42,-.85));vec3 ax=normalize(cross(c,vec3(0.,1.,0.)));vec3 ay=cross(c,ax);float rr=acos(clamp(dot(d,c),-1.,1.))/.55;float an=atan(dot(d,ay),dot(d,ax));
+  float arms=pow(.5+.5*sin(2.*an+rr*9.-fbm(d*6.)*2.),2.5);float fall=exp(-rr*rr*1.6)*step(0.,dot(d,c));float core=exp(-rr*rr*14.);
+  sp=(mix(uTint,uTint2,.5+.5*sin(an*2.+rr*3.))*arms*.75+vec3(1.,.85,.7)*core*.6)*fall*uSpiral;}
+  gl_FragColor=vec4(base*.32+mw*.42+neb*.36+sp,1.);}`});
 }
