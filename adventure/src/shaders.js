@@ -71,7 +71,7 @@ export function flameMaterial(){
  vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
  fragmentShader:`uniform float uTime;uniform float uPow;varying vec2 vUv;
  void main(){float l=vUv.y;float fl=.75+.25*sin(uTime*60.+l*12.)*sin(uTime*37.);vec3 core=vec3(.75,.9,1.);vec3 out_=vec3(.2,.45,1.);vec3 c=mix(core,out_,smoothstep(.0,.8,l));
-  float a=(1.-l)*(1.-l)*fl;gl_FragColor=vec4(c*3.*uPow,a*uPow);}`});
+  float a=(1.-l)*(1.-l)*fl;gl_FragColor=vec4(c*2.4*uPow,a*uPow);}`});
 }
 export const FinalPass={
  uniforms:{tDiffuse:{value:null},uTime:{value:0},uAberr:{value:.0015},uVig:{value:.55},uFlash:{value:0},uFlashCol:{value:new THREE.Color(1,1,1)},uDamage:{value:0},uBlur:{value:0},uSat:{value:1.18},uCon:{value:1.06}},

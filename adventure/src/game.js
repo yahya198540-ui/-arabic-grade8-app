@@ -363,8 +363,8 @@ function updateShip(dt){
  const u=ship.userData;const sp=S.speed/BASE;
  const target=S.mode==='cine'&&S.cine&&S.cine.type==='launch'?S.flameP:(S.mode==='cine'&&S.cine&&S.cine.type==='landing'?clamp(S.flameP,.1,1):clamp(.35+sp*.8+S.boost*.9,0,1.8));S.flameP+=(target-S.flameP)*Math.min(1,dt*5);
  u.fm.uniforms.uTime.value=S.time;u.fm.uniforms.uPow.value=.18+S.flameP*.22;
- {const fk=1+.1*Math.sin(S.time*50);u.cones.forEach(c=>c.scale.set(1,1,c.userData.k*(.35+S.flameP*.85)*fk));u.sprites.forEach(s=>s.scale.setScalar(1.5+S.flameP*1.5))}
- u.light.intensity=8+S.flameP*26;
+ {const fk=1+.1*Math.sin(S.time*50);u.cones.forEach(c=>c.scale.set(1,1,c.userData.k*(.35+S.flameP*.85)*fk));u.sprites.forEach(s=>s.scale.setScalar(1.1+S.flameP*1.0))}
+ u.light.intensity=4+S.flameP*10;
  u.sm.uniforms.uTime.value=S.time;u.sm.uniforms.uHit.value=Math.max(0,u.sm.uniforms.uHit.value-dt*1.8);u.sm.uniforms.uLevel.value=S.shield/3;
  ship.visible=S.mode!=='crash';if(S.inv>0&&S.mode==='play')ship.visible=Math.floor(S.time*16)%2===0||S.inv>1.5;
  if(S.mode!=='menu'&&S.speed>2&&Math.random()<.9){for(const sx of[-1.35,1.35]){burst(new THREE.Vector3(S.x+sx*1.1,S.y-.14,z+3.6),1,0x66b8ff,1.6,.6,1)}}
@@ -403,7 +403,7 @@ function updateFx(dt){
     else{u.ring.material.opacity=(dd<150&&dd>-4)?(.15+.65*prox)*(.7+.3*Math.sin(S.time*(8+prox*14))):0;u.ring.scale.setScalar(1+.12*Math.sin(S.time*6));u.core.material.opacity=.15+.6*prox;u.bolt.material.opacity=u.bolt2.material.opacity=0}
     break}
   }}
- if(station.visible){station.position.set(0,-6,-(STOPS[9]+500));station.rotation.set(-.38,0,0);station.userData.body.rotation.y+=dt*.01;
+ if(station.visible){station.position.set(0,-4,-(STOPS[9]+420));station.rotation.set(-.34,0,0);station.scale.setScalar(1.15);station.userData.body.rotation.y+=dt*.01;
   station.userData.blink.forEach((l,i)=>{const on=S.endGlow>0?1:(Math.sin(S.time*4+i*1.7)>-.2?1:.3);l.scale.setScalar(on)});
   station.userData.drones.forEach(d=>{const u=d.userData;u.a+=dt*u.sp;d.position.set(Math.cos(u.a)*u.r,u.y,Math.sin(u.a)*u.r);d.rotation.y=-u.a+Math.PI}) }
  const tg=$('target');if(S.mode==='play'&&S.gi<10){const st=L.gates[S.gi];const dd=Math.max(0,st.d-S.dist);tg.textContent=`🧠 وحدة المعرفة ${toAr(S.gi+1)} · ${toAr(Math.round(dd))} م`;tg.classList.add('show')}else if(S.mode!=='play')tg.classList.remove('show');

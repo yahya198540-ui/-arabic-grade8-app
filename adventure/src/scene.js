@@ -14,10 +14,10 @@ export const Quality=(()=>{const low=params.get('q')==='low'||mobile;return low?
 const V=(x,y,z)=>new THREE.Vector3(x,y,z).normalize();const C=(r,g,b)=>new THREE.Color(r,g,b);
 /* sunVis: موضع الشمس المرئية (أمام المركبة عند حافة الكوكب)، fillI: إضاءة تعبئة من الخلف */
 export const ENV=[
- {pSun:V(.35,.6,.72),sunVis:V(.34,.1,-.93),sunCol:C(1,.86,.62),sunI:3.0,fillI:.95,fillCol:C(.9,.95,1),hemi:C(.45,.62,1),hemiI:.5,rimA:C(1,.45,.7),rimB:C(.3,.7,1),fog:C(.04,.07,.2),fd:.0006,neb1:C(.15,.3,1),neb2:C(.6,.2,.9),top:C(.01,.02,.1),bot:C(.05,.12,.4),rock:C(.85,.82,.95),spiral:0,sunK:1,ex:1.1,bloom:.5},
- {pSun:V(.6,.42,.62),sunVis:V(-.55,.32,-.77),sunCol:C(1,.72,.42),sunI:3.6,fillI:.85,fillCol:C(1,.82,.7),hemi:C(.55,.4,.85),hemiI:.55,rimA:C(1,.35,.3),rimB:C(.45,.5,1),fog:C(.1,.05,.08),fd:.0008,neb1:C(1,.45,.12),neb2:C(.7,.15,.4),top:C(.04,.02,.1),bot:C(.32,.12,.16),rock:C(1,.86,.7),spiral:0,sunK:1,ex:1.12,bloom:.55},
- {pSun:V(-.25,.5,.82),sunVis:V(.2,.28,-.94),sunCol:C(.8,.82,1),sunI:2.2,fillI:.9,fillCol:C(.85,.8,1),hemi:C(.6,.45,1),hemiI:.7,rimA:C(.75,.3,1),rimB:C(.2,1,.9),fog:C(.05,.03,.18),fd:.0009,neb1:C(.3,.2,1),neb2:C(.15,.9,.9),top:C(.02,.01,.12),bot:C(.14,.05,.42),rock:C(.8,.75,1),spiral:1,sunK:0.18,ex:1.15,bloom:.7},
- {pSun:V(.4,.55,.7),sunVis:V(.5,.25,-.82),sunCol:C(1,.95,.88),sunI:3.0,fillI:.95,fillCol:C(.9,.95,1),hemi:C(.5,.68,1),hemiI:.55,rimA:C(1,.5,.25),rimB:C(.3,.75,1),fog:C(.03,.07,.2),fd:.0006,neb1:C(.2,.4,1),neb2:C(.5,.3,.9),top:C(.01,.03,.12),bot:C(.06,.16,.45),rock:C(.85,.85,.95),spiral:.25,sunK:0.55,ex:1.1,bloom:.5}
+ {pSun:V(.35,.6,.72),sunVis:V(.34,.1,-.93),sunCol:C(1,.86,.62),sunI:2.5,fillI:.62,fillCol:C(.9,.95,1),hemi:C(.45,.62,1),hemiI:.5,rimA:C(1,.45,.7),rimB:C(.3,.7,1),fog:C(.04,.07,.2),fd:.0006,neb1:C(.15,.3,1),neb2:C(.6,.2,.9),top:C(.01,.02,.1),bot:C(.05,.12,.4),rock:C(.85,.82,.95),spiral:0,sunK:1,ex:1.1,bloom:.5},
+ {pSun:V(.6,.42,.62),sunVis:V(-.55,.32,-.77),sunCol:C(1,.72,.42),sunI:3.0,fillI:.6,fillCol:C(1,.82,.7),hemi:C(.55,.4,.85),hemiI:.55,rimA:C(1,.35,.3),rimB:C(.45,.5,1),fog:C(.1,.05,.08),fd:.0008,neb1:C(1,.45,.12),neb2:C(.7,.15,.4),top:C(.04,.02,.1),bot:C(.32,.12,.16),rock:C(1,.86,.7),spiral:0,sunK:1,ex:1.12,bloom:.55},
+ {pSun:V(-.25,.5,.82),sunVis:V(.2,.28,-.94),sunCol:C(.8,.82,1),sunI:1.9,fillI:.62,fillCol:C(.85,.8,1),hemi:C(.6,.45,1),hemiI:.7,rimA:C(.75,.3,1),rimB:C(.2,1,.9),fog:C(.05,.03,.18),fd:.0009,neb1:C(.3,.2,1),neb2:C(.15,.9,.9),top:C(.02,.01,.12),bot:C(.14,.05,.42),rock:C(.8,.75,1),spiral:1,sunK:0.18,ex:1.15,bloom:.7},
+ {pSun:V(.4,.55,.7),sunVis:V(.5,.25,-.82),sunCol:C(1,.95,.88),sunI:2.5,fillI:.62,fillCol:C(.9,.95,1),hemi:C(.5,.68,1),hemiI:.55,rimA:C(1,.5,.25),rimB:C(.3,.75,1),fog:C(.03,.07,.2),fd:.0006,neb1:C(.2,.4,1),neb2:C(.5,.3,.9),top:C(.01,.03,.12),bot:C(.06,.16,.45),rock:C(.85,.85,.95),spiral:.25,sunK:0.55,ex:1.1,bloom:.5}
 ];
 const cl=e=>{const o={};for(const k in e)o[k]=e[k].clone?e[k].clone():e[k];return o};
 export const envNow=cl(ENV[0]);

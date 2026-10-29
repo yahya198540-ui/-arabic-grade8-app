@@ -12,7 +12,7 @@ export function initResources(){
  R.rockTex=[rockTexture(4,[172,138,108]),rockTexture(11,[150,120,98]),rockTexture(23,[184,150,118])];
  R.rockGeo=[1,2,3,4,5,6].map(s=>rockGeometry(s*7));
  R.rockMat=R.rockTex.map(t=>{const m=new THREE.MeshStandardMaterial({map:t,bumpMap:t,bumpScale:9,roughness:.92,metalness:.04,envMapIntensity:.55});m.userData.base=new THREE.Color(1,1,1);return m});
- R.pearl=phys({color:0xc4ccda,metalness:.3,roughness:.34,clearcoat:.8,clearcoatRoughness:.1,envMapIntensity:1.05,map:R.panel});
+ R.pearl=phys({color:0xc4ccda,metalness:.3,roughness:.34,clearcoat:.8,clearcoatRoughness:.1,envMapIntensity:.75,map:R.panel});
  R.orange=phys({color:0xf06a10,metalness:.35,roughness:.32,clearcoat:.9,clearcoatRoughness:.08,envMapIntensity:1.1});
  R.dark=phys({color:0x262e44,metalness:.8,roughness:.34,envMapIntensity:1.3});
  R.metal=phys({color:0xaab4c8,metalness:.9,roughness:.3,envMapIntensity:1.5});
@@ -65,8 +65,8 @@ export function makeShip(){
   const nz=new THREE.Mesh(new THREE.CylinderGeometry(.62,.5,.55,36),R.dark);nz.rotation.x=Math.PI/2;nz.position.z=1.55;eg.add(nz);
   const core=new THREE.Mesh(new THREE.CircleGeometry(.46,32),R.blueGlow);core.position.z=1.84;core.rotation.y=Math.PI;eg.add(core);
   for(const[rad,len,k]of[[.5,1,2.6],[.3,.8,1.8]]){const cg=new THREE.ConeGeometry(rad,1,28,1,true);cg.rotateX(Math.PI/2);cg.translate(0,0,.5);const c=new THREE.Mesh(cg,fm);c.position.z=1.86;c.userData.k=k;eg.add(c);cones.push(c)}
-  const gs=new THREE.Sprite(R.glowMat(0x4db8ff));gs.scale.setScalar(1.8);gs.position.z=2.2;eg.add(gs);sprites.push(gs);}
- const light=new THREE.PointLight(0x4db8ff,18,18,2);light.position.set(0,0,3.8);body.add(light);
+  const gs=new THREE.Sprite(R.glowMat(0x4db8ff));gs.scale.setScalar(1.3);gs.position.z=2.2;eg.add(gs);sprites.push(gs);}
+ const light=new THREE.PointLight(0x4db8ff,8,14,2);light.position.set(0,0,3.8);body.add(light);
  const sm=shieldMaterial();const shield=new THREE.Mesh(new THREE.SphereGeometry(3.7,40,24),sm);shield.scale.set(1.15,.7,1.3);shield.position.z=.4;body.add(shield);
  g.userData={body,cones,sprites,fm,sm,light};g.scale.setScalar(1.1);return g}
 
@@ -90,7 +90,7 @@ export function makeDebris(kind,r,seed){
  else{add(new THREE.CylinderGeometry(r*.6,r*.6,r*1.6,28,1,true),R.metal).material=R.metal.clone();g.children[0].material.side=THREE.DoubleSide;add(new THREE.TorusGeometry(r*.6,r*.06,10,28),R.orange,0,r*.8,0).rotation.x=Math.PI/2}
  g.rotation.set(seed,seed*2,seed*3);return g}
 export function makeCloud(idx,add){const m=new THREE.SpriteMaterial({map:R.cloudTex[idx%4],color:R.cloudCols[idx%4],transparent:true,depthWrite:false,blending:add?THREE.AdditiveBlending:THREE.NormalBlending,opacity:add?.16:.3,fog:false});return new THREE.Sprite(m)}
-export function makeLamp(){const g=new THREE.Group();g.add(new THREE.Mesh(R.lampGeo,R.dark));const l=new THREE.Mesh(new THREE.SphereGeometry(.45,12,10),R.orangeGlow);l.position.y=1.7;g.add(l);const s=new THREE.Sprite(R.glowMat(0xffa030));s.scale.setScalar(5);s.position.y=1.7;g.add(s);g.userData.l=l;return g}
+export function makeLamp(){const g=new THREE.Group();g.add(new THREE.Mesh(R.lampGeo,R.dark));const l=new THREE.Mesh(new THREE.SphereGeometry(.7,12,10),R.orangeGlow);l.position.y=1.7;g.add(l);const s=new THREE.Sprite(R.glowMat(0xffa030));s.scale.setScalar(8);s.position.y=1.7;g.add(s);g.userData.l=l;return g}
 export function makeStrike(){ // برق كوني: حلقة تحذير + شعاع متعرّج
  const g=new THREE.Group();
  const ring=new THREE.Mesh(new THREE.RingGeometry(5.2,6.4,48),new THREE.MeshBasicMaterial({color:0xc08cff,transparent:true,opacity:.0,side:THREE.DoubleSide,blending:THREE.AdditiveBlending,depthWrite:false}));g.add(ring);
