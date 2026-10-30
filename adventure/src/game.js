@@ -227,7 +227,7 @@ function cineStep(dt){
  if(c.type==='launch'){
   S.flameP=t<4.4?.28:1;S.speed=0;
   if(!c.did.ti&&t>.4){c.did.ti=1;showTitle(STAGES[0],'ثلاثة… اثنان… واحد')}
-  [[2.1,'٣'],[3,'٢'],[3.9,'١']].forEach(([tt,tx],i)=>{if(!c.did['c'+i]&&t>=tt){c.did['c'+i]=1;const e=$('count');e.textContent=tx;e.classList.remove('hidden','pop');void e.offsetWidth;e.classList.add('pop');Snd.sfx('beep')}});
+  [[2.1,'٣'],[3,'٢'],[3.9,'١']].forEach(([tt,tx],i)=>{if(!c.did['c'+i]&&t>=tt){c.did['c'+i]=1;if(i===0){const c=$('cine');c.classList.add('hidden');c.classList.remove('show')}const e=$('count');e.textContent=tx;e.classList.remove('hidden','pop');void e.offsetWidth;e.classList.add('pop');Snd.sfx('beep')}});
   if(!c.did.ig&&t>=4.8){c.did.ig=1;Snd.sfx('ignite');S.flash=.5;S.flashCol.setRGB(.7,.85,1);S.shake=1;S.camMode='chase'}
   if(t>=5.7){S.mode='play';S.speed=6;endCine();hint('وجّه المركبة بالفأرة أو بإصبعك · Space للدفع ⚡ · اجمع بلورات الطاقة 💎 وتفادَ الحطام',8000)}
  }else if(c.type==='stage'){
@@ -251,7 +251,7 @@ function cineStep(dt){
 /* ================= الأسئلة: الإجابة بالطيران نحو كرة الإجابة ================= */
 const ORB_AHEAD=72;
 function enterQuestion(){
- S.mode='question';S.qShown=false;S.boosting=false;S.boost=0;S.firing=false;Snd.duck(.55);$('target').classList.remove('show');
+ S.mode='question';S.qShown=false;S.boosting=false;S.boost=0;S.firing=false;Snd.duck(.55);$('target').classList.remove('show');$('combo').classList.remove('show');$('hint').classList.remove('show');
  const nv=$('nav');nv.classList.add('show');Snd.sfx('warn');setTimeout(()=>Snd.sfx('beep'),180);
  setTimeout(()=>{if(S.mode!=='question'||S.qShown)return;S.qShown=true;nv.classList.remove('show');showQuestion(S.gi);hint('✈️ طِر نحو الإجابة الصحيحة (أو اضغط عليها) — المفاتيح 1 · 2 · 3',6000)},1500);
 }

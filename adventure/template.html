@@ -151,6 +151,26 @@ canvas#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-acti
 .paper .ft{width:100%;display:flex;justify-content:space-between;align-items:flex-end;font-size:clamp(10px,1.7vw,16px);font-weight:700;color:#6a5020}
 .rib{position:absolute;bottom:3.5%;left:50%;transform:translateX(-50%);width:clamp(30px,5vw,54px);height:clamp(40px,6.6vw,70px);background:linear-gradient(180deg,#2a5fd6,#1a2c6a);clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%)}
 @media print{body>*:not(#cert){display:none!important}#cert{position:static!important;background:#fff!important;display:flex!important}#cert .btns{display:none!important}.paper{box-shadow:none;max-height:none;width:100%}}
+
+/* ===== تنظيم الواجهة: عمود واحد للرسائل (لا تداخل) ===== */
+#stack{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top));transform:translateX(-50%);width:min(780px,calc(100vw - 340px));z-index:6;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
+#stack>*{position:static!important;transform:none!important;left:auto!important;top:auto!important;margin:0}
+#track{padding:7px 14px}
+#target,#nav,#hint,#combo,#bossbar{display:none;opacity:1!important}
+#target.show,#nav.show,#hint.show,#combo.show,#bossbar.show{display:block;animation:stIn .35s ease-out}
+@keyframes stIn{from{opacity:0}}
+#hint,#target,#nav{max-width:100%}#hint{font-size:clamp(12px,1.8vw,16px);padding:7px 16px;text-align:center}
+#nav{padding:10px 26px}#nav b{font-size:clamp(20px,3.6vw,32px)}
+#combo{border-bottom:0;padding:2px 12px}
+#bossbar{width:min(420px,90%)}
+#qwrap{display:flex;width:100%;padding:0;animation:qr .5s cubic-bezier(.2,1,.3,1)}#qwrap.hidden{display:none}
+#term{width:100%}
+/* عنوان الإقلاع والعدّ التنازلي في أعلى الشاشة فوق المركبة */
+#cine{justify-content:flex-start;padding-top:max(15vh,86px)}
+#cine .t{font-size:clamp(30px,6.6vw,70px)}
+#count{align-items:flex-start;padding-top:max(25vh,150px);font-size:clamp(70px,15vw,150px)}
+@media(max-width:900px){#stack{width:min(560px,96vw);top:calc(max(10px,env(safe-area-inset-top)) + 52px)}#track{padding:5px 10px}}
+@media(max-height:520px){#cine{padding-top:max(13vh,60px)}#count{padding-top:max(18vh,80px)}}
 </style>
 </head>
 <body>
@@ -159,7 +179,6 @@ canvas#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-acti
 
 <div id="hud" class="hidden">
  <div id="pchip" class="chip glass"><div class="av">👦</div><div><div class="nm" id="pname">مستكشف</div></div></div>
- <div id="track" class="glass"></div>
  <div id="rchip" class="chip glass"><span class="st">⭐ <b id="pointsN">٠</b></span><span class="un">🧠 <b id="unitsN">٠/١٠</b></span></div>
  <div id="tools"><button class="ib" id="pauseBtn" title="إيقاف مؤقت">⏸</button><button class="ib" id="muteBtn" title="الصوت">🔊</button></div>
  <div id="vitals" class="chip glass">
@@ -168,11 +187,23 @@ canvas#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-acti
  </div>
  <div id="radarWrap"><canvas id="radar" width="264" height="264"></canvas></div>
  <button id="boostBtn">⚡</button><button id="fireBtn">🔥</button>
- <div id="combo"></div><div id="bossbar"><div class="bn">⚠️ العملاق الصخري<div class="bb"><i></i></div></div></div><div id="pops"></div>
- <div id="warns"></div><div id="hint" class="glass"></div><div id="target" class="glass"></div>
+ <div id="pops"></div>
+ <div id="warns"></div>
+ <div id="stack">
+ <div id="track" class="glass"></div>
+ <div id="target" class="glass"></div>
+ <div id="nav" class="glass"><b>وحدة معرفة جديدة!</b><small>نظام الملاحة الذكي · وضع التحليق الآمن</small></div>
+ <div id="hint" class="glass"></div>
+ <div id="combo"></div>
+ <div id="bossbar"><div class="bn">⚠️ العملاق الصخري<div class="bb"><i></i></div></div></div>
+ <div id="qwrap" class="hidden"><div id="term">
+ <div id="qhead"><span class="tg" id="qnum"></span><span id="qttl">💡 وحدة معرفة جديدة</span><span><button id="hintBtn">💡 تلميح</button> <span id="att" style="opacity:.7"></span></span></div>
+ <div id="sentence"></div><div id="qprompt"></div><div id="opts"></div><div id="fb"></div>
+</div></div>
 </div>
 
-<div id="nav" class="glass"><b>وحدة معرفة جديدة!</b><small>نظام الملاحة الذكي · وضع التحليق الآمن</small></div>
+</div>
+
 <div id="bars"><div class="t"></div><div class="b"></div></div>
 <div id="cine" class="hidden"><div class="k"></div><div class="t"></div><div class="s"></div></div>
 <div id="count" class="hidden"></div>
@@ -190,11 +221,6 @@ canvas#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-acti
 </div>
 
 <div id="frame" class="hidden"></div>
-<div id="qwrap" class="hidden"><div id="term">
- <div id="qhead"><span class="tg" id="qnum"></span><span id="qttl">💡 وحدة معرفة جديدة</span><span><button id="hintBtn">💡 تلميح</button> <span id="att" style="opacity:.7"></span></span></div>
- <div id="sentence"></div><div id="qprompt"></div><div id="opts"></div><div id="fb"></div>
-</div></div>
-
 <div id="end" class="ov hidden"><div class="card">
  <div class="eyebrow" id="endEy">مهمة ناجحة</div>
  <h2>نجحتَ في إنقاذ المحطة الفضائية!</h2>
