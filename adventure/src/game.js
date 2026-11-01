@@ -375,7 +375,7 @@ function saveCertPng(){
  x.fillText(`وحصوله على درجة تعليمية قدرها ${toAr(c.sc)} من ${toAr(10)} في درس العطف — الصف الثامن الأساسي.`,W/2,790);
  x.fillStyle='#1a2c6a';x.font='900 66px '+F;x.fillText(`الدرجة: ${toAr(c.sc)}/${toAr(10)}`,W/2,910);
  x.fillStyle='#6a5020';x.font='700 32px '+F;x.textAlign='right';x.fillText('إعداد وتنفيذ: الأستاذ يحيى عبدالله الجابري',W-110,1020);x.textAlign='left';x.fillText('التاريخ: '+c.d,110,1020);
- const a=document.createElement('a');a.download='شهادة-مستكشف-العطف.png';a.href=cv.toDataURL('image/png');document.body.append(a);a.click();a.remove();
+ cv.toBlob(bl=>{const u=URL.createObjectURL(bl);const a=document.createElement('a');a.download='Alatf-Explorer-Certificate.png';a.href=u;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)},'image/png');
 }
 let confetti={on:false,parts:[]};
 function startConfetti(sec){const cv=$('confetti');cv.classList.remove('hidden');cv.width=innerWidth;cv.height=innerHeight;const x=cv.getContext('2d');const cols=['#ffd35a','#4dd8ff','#ff6fa8','#7cf5b6','#c08cff','#fff'];
