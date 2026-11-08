@@ -250,11 +250,11 @@ function cineStep(dt){
 }
 
 /* ================= الأسئلة: الإجابة بالطيران نحو كرة الإجابة ================= */
-const ORB_AHEAD=72;
+const ORB_AHEAD=40,DWELL=2.6,GRACE=3.5; // الكرات ثابتة أمام المركبة؛ لا تقدّم ولا ضغط وقت أثناء السؤال
 function enterQuestion(){
- S.mode='question';S.qShown=false;S.boosting=false;S.boost=0;S.firing=false;Snd.duck(.55);$('target').classList.remove('show');$('combo').classList.remove('show');$('hint').classList.remove('show');
+ S.mode='question';S.qShown=false;S.boosting=false;S.boost=0;S.firing=false;S.surgeT=0;S.qT=0;Snd.duck(.55);$('target').classList.remove('show');$('combo').classList.remove('show');$('hint').classList.remove('show');
  const nv=$('nav');nv.classList.add('show');Snd.sfx('warn');setTimeout(()=>Snd.sfx('beep'),180);
- setTimeout(()=>{if(S.mode!=='question'||S.qShown)return;S.qShown=true;nv.classList.remove('show');showQuestion(S.gi);hint('✈️ طِر نحو الكرة التي تحمل الإجابة الصحيحة (أو اضغط عليها) — المفاتيح 1 · 2 · 3'+(QUESTIONS[S.gi]&&QUESTIONS[S.gi].options.length>3?' · 4':''),6500)},1500);
+ setTimeout(()=>{if(S.mode!=='question'||S.qShown)return;S.qShown=true;nv.classList.remove('show');showQuestion(S.gi);hint('⏸️ المركبة متوقفة — خُذ وقتك في التفكير. للإجابة: اضغط على الخيار أو المفاتيح 1 · 2 · 3'+(QUESTIONS[S.gi]&&QUESTIONS[S.gi].options.length>3?' · 4':'')+' — أو ثبّت المركبة على الكرة '+toAr(DWELL)+' ثوانٍ',9000)},1500);
 }
 const Q={i:0,att:0,locked:false,prev:'',hint:0,done:false};
 const LET=['أ','ب','ج','د'];
@@ -268,7 +268,7 @@ function showQuestion(i){
 function renderOpts(){
  const q=QUESTIONS[Q.i],arr=shuf(q.options,Q.prev);Q.prev=arr.map(o=>o.t).join('|');const box=$('opts');box.innerHTML='';box.className=(arr.length>3?'g4 ':'')+(arr.every(o=>o.t.length<=14)?'short':'');
  arr.forEach((o,k)=>{const b=document.createElement('button');b.className='opt';b.dataset.ok=o.ok?'1':'0';const l=document.createElement('span');l.className='lt';l.textContent=LET[k];const t=document.createElement('span');t.textContent=o.t;b.append(l,t);b.onclick=()=>choose(b,o);box.append(b)});
- spawnOrbs(arr);
+ S.qT=0;spawnOrbs(arr);
 }
 /* كرات الإجابة: ثلاث كرات مضيئة أمام المركبة */
 const ORB_COL=[0xff5a9a,0x3fc8ff,0xa070ff,0xffc83d];
@@ -286,16 +286,18 @@ function spawnOrbs(arr){
   const core=new THREE.Mesh(new THREE.SphereGeometry(OR,32,24),new THREE.MeshStandardMaterial({color:col,emissive:col,emissiveIntensity:1.5,roughness:.15,metalness:.1,transparent:true,opacity:.92}));g.add(core);
   const ring=new THREE.Mesh(new THREE.TorusGeometry(OR*1.36,.16,10,60),new THREE.MeshBasicMaterial({color:new THREE.Color(col).multiplyScalar(2.2)}));ring.rotation.x=1.2;g.add(ring);
   const gl=new THREE.Sprite(R.glowMat(col));gl.scale.setScalar(many?18:22);g.add(gl);
-  const lb=new THREE.Sprite(new THREE.SpriteMaterial({map:many?orbLetter(LET[i],col):orbLabel(o.t,col),transparent:true,depthWrite:false,depthTest:false}));if(many)lb.scale.set(6.2,6.2,1);else lb.scale.set(15,7.5,1);lb.position.y=many?5.2:6.4;lb.renderOrder=20;g.add(lb);
-  g.position.set(lanes[i],many?(i%2?-3:-2):(i===1?-1.8:-.8),z);world.add(g);orbs.push({g,ring,core,o,i,dead:false,r:OR})})
+  const lb=new THREE.Sprite(new THREE.SpriteMaterial({map:many?orbLetter(LET[i],col):orbLabel(o.t,col),transparent:true,depthWrite:false,depthTest:false}));if(many)lb.scale.set(6.2,6.2,1);else lb.scale.set(8.4,4.2,1);lb.position.y=many?-4.6:-5.4;lb.renderOrder=20;g.add(lb);
+  g.position.set(lanes[i],many?(i%2?-5.4:-4.4):(i===1?-5.2:-4.2),z);world.add(g);orbs.push({g,ring,core,o,i,dead:false,r:OR,ch:0,by:g.position.y})})
 }
 function pickOrb(i){if(S.mode!=='question'||Q.locked||!orbs[i])return;const b=document.querySelectorAll('#opts .opt')[i];if(b)b.click()}
 function updateOrbs(dt){
- const sz=-S.dist;for(const ob of orbs){ob.ring.rotation.z+=dt*1.6;ob.g.position.y+=Math.sin(S.time*2+ob.i)*.01;ob.g.scale.setScalar(ob.dead?Math.max(.01,ob.g.scale.x-dt*4):1+.04*Math.sin(S.time*4+ob.i))}
+ S.qT+=dt;
+ for(const ob of orbs){ob.ring.rotation.z+=dt*(1.6+ob.ch*6);ob.g.position.y=ob.by+Math.sin(S.time*2+ob.i)*.25;ob.g.scale.setScalar(ob.dead?Math.max(.01,ob.g.scale.x-dt*4):(1+.04*Math.sin(S.time*4+ob.i))*(1+ob.ch*.18));if(!ob.dead){ob.core.material.emissiveIntensity=1.5+ob.ch*2.5}}
  if(!S.qShown||Q.locked||Q.done)return;
- for(const ob of orbs){if(ob.dead)continue;const p=ob.g.position;if(hitSphere(p.x,p.y,p.z,ob.r+.7)){Snd.sfx('orb');pickOrb(ob.i);return}}
- // إن تجاوزت المركبة الكرات دون اختيار: أعد وضعها أمامها
- if(orbs.length&&orbs[0].g.position.z>sz+9){const arr=orbs.map(o=>o.o);spawnOrbs(arr);hint('↩️ لم تختر بعد — طِر نحو إحدى الكرات',2400)}
+ // لا اختيار بالطيران قبل انتهاء مهلة التفكير؛ والاختيار يتطلب تثبيت المركبة على الكرة عدة ثوانٍ
+ const act=S.qT>=GRACE;let hit=null;
+ for(const ob of orbs){if(ob.dead){ob.ch=0;continue}const p=ob.g.position;const near=act&&Math.hypot(S.x-p.x,S.y-p.y)<ob.r+.9;if(near){ob.ch=Math.min(1,ob.ch+dt/DWELL);if(ob.ch>=1)hit=ob}else ob.ch=Math.max(0,ob.ch-dt*1.5)}
+ if(hit){hit.ch=0;Snd.sfx('orb');pickOrb(hit.i)}
 }
 function choose(btn,o){
  if(Q.locked)return;Q.locked=true;Q.att++;const q=QUESTIONS[Q.i];const idx=[...document.querySelectorAll('#opts .opt')].indexOf(btn);const ob=orbs[idx];
@@ -307,8 +309,8 @@ function choose(btn,o){
   S.cp=L.gates[Q.i].d+170;S.cpCells=S.cells;S.cpPoints=S.points;S.gi=Q.i+1;L.gates[Q.i].open=true;save();updHud();
   setTimeout(()=>{$('qwrap').classList.add('hidden');clearOrbs();Q.locked=false;Q.done=false;Snd.duck(1);
    if(Q.i===N-1){startCine('landing')}
-   else{L.gates[Q.i].cine=TRANS.includes(Q.i)?1:0;S.mode='play';S.inv=1.5;Snd.sfx('gate');S.flash=.2;burst(new THREE.Vector3(S.x,S.y,-S.dist),60,0x66d8ff,26,1,1);hint(TRANS.includes(Q.i)?'استعد للانتقال إلى منطقة جديدة…':'ممتاز! تُستأنف الرحلة ✨',2600)}
-  },1500);
+   else{L.gates[Q.i].cine=TRANS.includes(Q.i)?1:0;S.mode='play';S.inv=3;Snd.sfx('gate');S.flash=.2;burst(new THREE.Vector3(S.x,S.y,-S.dist),60,0x66d8ff,26,1,1);hint(TRANS.includes(Q.i)?'استعد للانتقال إلى منطقة جديدة…':'ممتاز! تُستأنف الرحلة ✨',2600)}
+  },2800);
  }else{
   btn.classList.add('bad');Snd.sfx('wrong');S.shake=.3;if(ob){ob.core.material.color.set(0xff3030);ob.core.material.emissive.set(0xff2020);burst(ob.g.position.clone(),50,0xff5050,16,.8);ob.dead=true}
   const h=q.hints;setFb('bad','❌ ليست الإجابة الصحيحة — '+h[Math.min(Q.att-1,h.length-1)]);$('att').textContent='المحاولات: '+toAr(Q.att);
@@ -505,7 +507,7 @@ export function step(dt){
  switch(S.mode){
   case'play':playStep(dt);break;
   case'cine':cineStep(dt);if(S.mode==='cine'&&S.cine&&S.cine.type!=='landing')steer(dt);break;
-  case'question':S.speed+=(CRUISE-S.speed)*Math.min(1,dt*1.6);S.dist+=S.speed*dt;steer(dt);advanceStream();updateOrbs(dt);break;
+  case'question':S.speed=S.qShown?0:S.speed*Math.exp(-dt*3.2);S.dist+=S.speed*dt;steer(dt);advanceStream();updateOrbs(dt);break;
   case'crash':S.crashT+=dt;if(S.crashT>2.6)respawn();break;
   case'menu':S.speed=0;break;
  }
