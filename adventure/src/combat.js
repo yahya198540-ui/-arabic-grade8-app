@@ -62,11 +62,11 @@ export const Combat={
   enemies.push({kind:'boss',m:g,body,eyes,hp:42,max:42,r:19,cd:3,t:0,tele:0,flash:0,dead:false,leaving:false});ctx.hud.boss(1);ctx.hint('⚠️ العملاق الصخري! أطلق النار على جسمه وتفادَ قذائفه',6000);ctx.Snd.sfx('warn');
  },
  startDrones(ev){
-  for(let i=0;i<3;i++){const g=new THREE.Group();const add=(geo,mat,x=0,y=0,z=0)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);g.add(m);return m};
+  const nD=ev.n||3;for(let i=0;i<nD;i++){const g=new THREE.Group();const add=(geo,mat,x=0,y=0,z=0)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);g.add(m);return m};
    add(new RoundedBoxGeometry(2.6,1.2,4.2,3,.3),R.pearl);add(new RoundedBoxGeometry(7.4,.22,1.8,2,.08),R.orange,0,0,.4);add(new RoundedBoxGeometry(1.2,.8,1.4,2,.2),R.dark,0,.7,-.4);
    const eye=add(new THREE.SphereGeometry(.55,14,10),new THREE.MeshBasicMaterial({color:new THREE.Color(3,.3,.3)}),0,.1,2.2);const gl=new THREE.Sprite(R.glowMat(0xff3030));gl.scale.setScalar(6);gl.position.set(0,.1,2.3);g.add(gl);
    const th=new THREE.Sprite(R.glowMat(0x4db8ff));th.scale.setScalar(4);th.position.z=-2.4;g.add(th);
-   g.position.set(0,0,-(ctx.S.dist+300));ctx.world.add(g);enemies.push({kind:'drone',m:g,eye,gl,idx:i,hp:3,max:3,r:3,cd:1.6+i*.9,t:rnd(0,6),tele:0,flash:0,dead:false,leaving:false,end:ev.end})}
+   g.position.set(0,0,-(ctx.S.dist+300));ctx.world.add(g);enemies.push({kind:'drone',m:g,eye,gl,idx:i,hp:3,max:3,r:3,cd:1.6+i*.9+((ev.cd||2.7)-2.7),t:rnd(0,6),tele:0,flash:0,dead:false,leaving:false,end:ev.end,cdBase:ev.cd||2.7})}
   ctx.hint('🎯 دفاعات المحطة! أسقط الطائرات المسيّرة قبل أن تصيبك',5500);ctx.Snd.sfx('warn');
  },
  clearEnemies(){for(const e of enemies){if(!e.dead)e.leaving=true}for(const s of shots)ctx.world.remove(s.m);shots.length=0;ctx.hud.boss(null)},
@@ -107,7 +107,7 @@ export const Combat={
     e.m.position.set(7.8*Math.sin(e.t*.8+e.idx*2.1),3.2*Math.sin(e.t*.65+e.idx*1.7)+.4,sz-dz);e.m.lookAt(S.x,S.y,sz);e.m.rotation.z=Math.sin(e.t*.8+e.idx*2.1)*.5;
     e.gl.scale.setScalar(6+(e.tele>0?4:0)+e.flash*20);
     if(ap>=1){e.cd-=dt;if(e.cd<.55&&e.tele<=0&&e.cd>0){e.tele=.55;ctx.Snd.sfx('warn')}if(e.tele>0)e.tele-=dt;
-     if(e.cd<=0){this.spawnShot(e.m.position.clone(),new THREE.Vector3(S.x+S.vx*.3,S.y+S.vy*.3,sz),56,false);e.cd=2.7+Math.random()*.6;e.tele=0}}
+     if(e.cd<=0){this.spawnShot(e.m.position.clone(),new THREE.Vector3(S.x+S.vx*.3,S.y+S.vy*.3,sz),56,false);e.cd=(e.cdBase||2.7)+Math.random()*.6;e.tele=0}}
    }
   }
   // انتهاء موجة المسيّرات

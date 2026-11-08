@@ -19,9 +19,9 @@ export const Scorm={
  progress(data){if(!api)return;this.set('cmi.suspend_data',JSON.stringify(data));
   if(ver==='1.2'){if(this.get('cmi.core.lesson_status')!=='completed'&&this.get('cmi.core.lesson_status')!=='passed')this.set('cmi.core.lesson_status','incomplete')}
   else this.set('cmi.completion_status','incomplete');this.commit()},
- finish(score,passed){if(!api)return;
-  if(ver==='1.2'){this.set('cmi.core.score.min',0);this.set('cmi.core.score.max',10);this.set('cmi.core.score.raw',score);this.set('cmi.core.lesson_status',passed?'passed':'failed')}
-  else{this.set('cmi.score.min',0);this.set('cmi.score.max',10);this.set('cmi.score.raw',score);this.set('cmi.score.scaled',score/10);this.set('cmi.completion_status','completed');this.set('cmi.success_status',passed?'passed':'failed')}
+ finish(score,passed,max=10){if(!api)return;
+  if(ver==='1.2'){this.set('cmi.core.score.min',0);this.set('cmi.core.score.max',max);this.set('cmi.core.score.raw',score);this.set('cmi.core.lesson_status',passed?'passed':'failed')}
+  else{this.set('cmi.score.min',0);this.set('cmi.score.max',max);this.set('cmi.score.raw',score);this.set('cmi.score.scaled',score/max);this.set('cmi.completion_status','completed');this.set('cmi.success_status',passed?'passed':'failed')}
   this.commit()},
  exit(){if(!api||!started)return;started=false;try{ver==='2004'?api.Terminate(''):api.LMSFinish('')}catch(e){}}
 };

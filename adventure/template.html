@@ -22,7 +22,7 @@ canvas#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-acti
 .stc{position:relative;z-index:2;text-align:center;max-width:720px;width:100%}
 .logo{display:inline-block;padding:10px 38px 14px;border-radius:30px;background:linear-gradient(180deg,rgba(18,40,110,.6),rgba(8,18,64,.6));border:2px solid rgba(255,200,70,.75);box-shadow:0 0 50px rgba(255,170,40,.35),0 0 0 6px rgba(10,20,70,.6),inset 0 0 40px rgba(60,160,255,.25);backdrop-filter:blur(6px)}
 .logo h1{margin:0;font-size:clamp(34px,7.5vw,72px);font-weight:900;line-height:1.15;color:#ffd35a;text-shadow:0 4px 0 #b34a00,0 8px 24px rgba(0,0,0,.6),0 0 40px rgba(255,190,60,.6);-webkit-text-stroke:2px #5a2400;paint-order:stroke fill}
-.logo h1 span{display:block;color:#7fe6ff;-webkit-text-stroke:2px #07406a;text-shadow:0 4px 0 #0a5a8a,0 0 40px rgba(80,210,255,.7)}
+.logo h1.t2{display:block;margin:0;color:#7fe6ff;-webkit-text-stroke:2px #07406a;text-shadow:0 4px 0 #0a5a8a,0 0 40px rgba(80,210,255,.7)}
 .sub{margin:14px auto 4px;font-size:clamp(14px,2.4vw,19px);font-weight:700;color:#d8ecff;text-shadow:0 2px 8px #000;padding:6px 18px;border-radius:999px;background:rgba(8,20,70,.55);border:1px solid rgba(100,190,255,.4);display:inline-block}
 .credit{margin:6px 0 14px;font-size:clamp(13px,2vw,16px);font-weight:600;color:#cfe2ff;text-shadow:0 2px 6px #000}.credit b{color:#ffe08a}
 .fld{display:flex;align-items:center;gap:10px;max-width:420px;margin:0 auto 12px;padding:6px 14px;border-radius:16px;background:rgba(6,14,50,.78);border:1.5px solid var(--line);box-shadow:0 0 24px rgba(60,170,255,.25) inset}
@@ -139,18 +139,20 @@ canvas#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-acti
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:60;width:100%;height:100%}
 
 /* ===== الشهادة ===== */
-#cert{background:rgba(2,6,24,.82);z-index:55;flex-direction:column;gap:14px}
-.paper{position:relative;width:min(900px,96vw);aspect-ratio:1.414;max-height:78vh;padding:3.2% 5%;color:#3a2a10;text-align:center;background:radial-gradient(ellipse at 50% 40%,#fffaf0,#f4e6c2);border:clamp(8px,1.4vw,14px) double #b98a22;box-shadow:0 0 0 clamp(3px,.6vw,6px) #1a2c6a inset,0 30px 80px rgba(0,0,0,.6);display:flex;flex-direction:column;align-items:center;justify-content:space-between;font-family:var(--font)}
+#cert{background:rgba(2,6,24,.95);z-index:55;flex-direction:column;gap:14px}
+.paper{--pw:min(900px,96vw,calc(70vh*1.414));position:relative;width:var(--pw);aspect-ratio:1.414;font-size:calc(var(--pw)/50);padding:3.2% 5%;color:#3a2a10;text-align:center;background:radial-gradient(ellipse at 50% 40%,#fffaf0,#f4e6c2);border:.7em double #b98a22;box-shadow:0 0 0 .3em #1a2c6a inset,0 30px 80px rgba(0,0,0,.6);display:flex;flex-direction:column;align-items:center;justify-content:space-between;font-family:var(--font);overflow:hidden}
 .paper::before{content:"";position:absolute;inset:2.2%;border:2px solid rgba(185,138,34,.55);pointer-events:none}
-.seal{width:clamp(48px,9vw,86px);height:clamp(48px,9vw,86px);border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe9a0,#d09a20);border:4px solid #8a5a00;display:flex;align-items:center;justify-content:center;font-size:clamp(24px,4.6vw,44px);box-shadow:0 4px 10px rgba(0,0,0,.3)}
-.paper h3{margin:0;font-size:clamp(22px,5vw,50px);font-weight:900;color:#1a2c6a;letter-spacing:1px}
-.paper .gv{font-size:clamp(12px,2vw,20px);font-weight:700;color:#6a5020}
-.paper .nm{font-size:clamp(24px,5.6vw,58px);font-weight:900;color:#a64a00;border-bottom:3px solid rgba(185,138,34,.6);padding:.1em 6% .15em;line-height:1.7;max-width:92%;white-space:nowrap}
-.paper .tx{font-size:clamp(12px,2.2vw,22px);font-weight:700;line-height:1.9;color:#3a2a10;max-width:88%}
-.paper .sc{margin-bottom:6%;font-size:clamp(16px,3.4vw,34px);font-weight:900;color:#1a2c6a}
-.paper .ft{width:100%;display:flex;justify-content:space-between;align-items:flex-end;font-size:clamp(10px,1.7vw,16px);font-weight:700;color:#6a5020}
-.rib{position:absolute;bottom:3.5%;left:50%;transform:translateX(-50%);width:clamp(30px,5vw,54px);height:clamp(40px,6.6vw,70px);background:linear-gradient(180deg,#2a5fd6,#1a2c6a);clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%)}
-@media print{body>*:not(#cert){display:none!important}#cert{position:static!important;background:#fff!important;display:flex!important}#cert .btns{display:none!important}.paper{box-shadow:none;max-height:none;width:100%}}
+.seal{width:4.6em;height:4.6em;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe9a0,#d09a20);border:.2em solid #8a5a00;display:flex;align-items:center;justify-content:center;font-size:2.4em;box-shadow:0 4px 10px rgba(0,0,0,.3)}
+.seal{font-size:inherit}.seal{line-height:1}
+.paper h3{margin:0;font-size:2.5em;font-weight:900;color:#1a2c6a;letter-spacing:1px;line-height:1.2}
+.paper .gv{font-size:1.1em;font-weight:700;color:#6a5020}
+.paper .nm{font-size:3em;font-weight:900;color:#a64a00;border-bottom:3px solid rgba(185,138,34,.6);padding:.05em 6% .1em;line-height:1.5;max-width:92%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.paper .tx{font-size:1.05em;font-weight:700;line-height:1.8;color:#3a2a10;max-width:90%}
+.paper .sc{margin-bottom:5%;font-size:1.7em;font-weight:900;color:#1a2c6a}
+.paper .ft{width:100%;display:flex;justify-content:space-between;align-items:flex-end;font-size:.85em;font-weight:700;color:#6a5020}
+.rib{position:absolute;bottom:3.5%;left:50%;transform:translateX(-50%);width:2.8em;height:3.8em;background:linear-gradient(180deg,#2a5fd6,#1a2c6a);clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%)}
+#cert{padding:8px;gap:12px}#cert .btns{flex:none}
+@media print{body>*:not(#cert){display:none!important}#cert{position:static!important;background:#fff!important;display:flex!important}#cert .btns{display:none!important}.paper{box-shadow:none;width:100%;--pw:100vw}}
 
 /* ===== تنظيم الواجهة: عمود واحد للرسائل (لا تداخل) ===== */
 #stack{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top));transform:translateX(-50%);width:min(780px,calc(100vw - 340px));z-index:6;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
@@ -171,6 +173,15 @@ canvas#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-acti
 #count{align-items:flex-start;padding-top:max(25vh,150px);font-size:clamp(70px,15vw,150px)}
 @media(max-width:900px){#stack{width:min(560px,96vw);top:calc(max(10px,env(safe-area-inset-top)) + 52px)}#track{padding:5px 10px}}
 @media(max-height:520px){#cine{padding-top:max(13vh,60px)}#count{padding-top:max(18vh,80px)}}
+
+.logo h1.t2{color:#7fe6ff;-webkit-text-stroke:2px #07406a;text-shadow:0 4px 0 #0a5a8a,0 0 40px rgba(80,210,255,.7)}
+#ruleCard,#endRule{margin:10px auto 0;max-width:620px;padding:8px 14px;border-radius:14px;font-size:clamp(12px,1.9vw,15px);line-height:1.8;font-weight:700;color:#fff3c8;background:rgba(40,28,6,.6);border:1px solid rgba(255,200,60,.6);text-align:right}
+#opts.g4{grid-template-columns:repeat(2,1fr)}#opts.g4.short{grid-template-columns:repeat(4,1fr)}
+#opts.g4 .opt{border-radius:16px;font-size:clamp(13px,2.1vw,17px);justify-content:flex-start;text-align:right;line-height:1.35;white-space:normal;padding:6px 10px}
+#opts.g4.short .opt{justify-content:center;font-size:clamp(15px,2.6vw,22px)}
+.opt:nth-child(4){border-color:#ffc83d}
+.rows{grid-template-columns:repeat(auto-fit,minmax(64px,1fr))}
+@media(max-width:560px){#opts.g4,#opts.g4.short{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -211,11 +222,12 @@ canvas#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-acti
 
 <div id="start" class="hidden">
  <div class="stc">
-  <div class="logo"><h1>مغامرة العطف<span>في الفضاء</span></h1></div><br>
+  <div class="logo"><h1 id="t1">مغامرة العطف</h1><h1 id="t2" class="t2">في الفضاء</h1></div><br>
   <div class="sub">انطلق في مهمة فضائية مليئة بالمغامرات والتحديات</div>
   <div class="credit">إعداد وتنفيذ: <b>الأستاذ يحيى عبدالله الجابري</b></div>
   <div class="fld"><i>🧑‍🚀</i><input id="nameInput" type="text" maxlength="24" placeholder="اكتب اسمك هنا" autocomplete="off"></div>
   <div class="btns" id="startBtns"><button class="btn" id="goBtn">▶ ابدأ المغامرة</button><button class="btn alt" id="howBtn">كيف ألعب؟</button><button class="btn alt" id="sndBtn">🔊 الصوت</button></div>
+  <div id="ruleCard" class="hidden"></div>
   <div id="how" class="hidden">🖱️ حرّك الفأرة (أو اسحب بإصبعك) لتوجيه المركبة · ⌨️ الأسهم أو W A S D · <b>Space</b> للدفع الإضافي ⚡<br>اجمع <b>بلورات الطاقة</b> 💎 وتفادَ الكويكبات والبرق. عند ظهور «وحدة معرفة جديدة» أجب عن السؤال لتكمل الرحلة.</div>
  </div>
 </div>
@@ -225,17 +237,17 @@ canvas#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-acti
  <div class="eyebrow" id="endEy">مهمة ناجحة</div>
  <h2>نجحتَ في إنقاذ المحطة الفضائية!</h2>
  <div class="stats"><div><span>النقاط</span><b id="stPts"></b></div><div><span>وحدات المعرفة</span><b id="stUnits"></b></div><div><span>الدرجة التعليمية (من المحاولة الأولى)</span><b id="stScore"></b></div></div>
- <p id="endMsg"></p><div class="rows" id="endRows"></div><p id="endLms" style="font-size:13px;opacity:.7;margin:2px"></p>
+ <div id="endRule" class="hidden"></div><p id="endMsg"></p><div class="rows" id="endRows"></div><p id="endLms" style="font-size:13px;opacity:.7;margin:2px"></p>
  <div class="btns"><button class="btn green" id="certBtn">🏅 حفظ الشهادة</button><button class="btn" id="againBtn">⟳ إعادة اللعب</button></div>
 </div></div>
 
 <div id="cert" class="ov hidden">
  <div class="paper" id="paper">
-  <div class="seal">🚀</div>
-  <h3>شهادة مستكشف العطف</h3>
+  <div class="seal"><span style="font-size:2.2em">🚀</span></div>
+  <h3 id="cTitle">شهادة مستكشف العطف</h3>
   <div class="gv">تُمنح هذه الشهادة للطالب:</div>
   <div class="nm" id="cName">مستكشف</div>
-  <div class="tx">لإتمامه بنجاح مهمة «مغامرة العطف في الفضاء» وإنقاذ المحطة الفضائية،<br>وحصوله على درجة تعليمية قدرها <b id="cScore">١٠</b> من ١٠ في درس العطف — الصف الثامن الأساسي.</div>
+  <div class="tx" id="cTx"></div>
   <div class="sc">الدرجة: <span id="cScore2">١٠/١٠</span></div>
   <div class="ft"><div>التاريخ: <span id="cDate"></span></div><div>إعداد وتنفيذ<br>الأستاذ يحيى عبدالله الجابري</div></div><div class="rib"></div>
  </div>
