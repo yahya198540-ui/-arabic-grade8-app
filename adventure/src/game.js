@@ -296,7 +296,7 @@ function updateOrbs(dt){
  if(!S.qShown||Q.locked||Q.done)return;
  // لا اختيار بالطيران قبل انتهاء مهلة التفكير؛ والاختيار يتطلب تثبيت المركبة على الكرة عدة ثوانٍ
  const act=S.qT>=GRACE;let hit=null;
- for(const ob of orbs){if(ob.dead){ob.ch=0;continue}const p=ob.g.position;const near=act&&Math.hypot(S.x-p.x,S.y-p.y)<ob.r+.9;if(near){ob.ch=Math.min(1,ob.ch+dt/DWELL);if(ob.ch>=1)hit=ob}else ob.ch=Math.max(0,ob.ch-dt*1.5)}
+ for(const ob of orbs){if(ob.dead){ob.ch=0;continue}const p=ob.g.position;const near=act&&Math.hypot(S.x-p.x,(S.y-p.y)*.5)<ob.r+.9;if(near){ob.ch=Math.min(1,ob.ch+dt/DWELL);if(ob.ch>=1)hit=ob}else ob.ch=Math.max(0,ob.ch-dt*1.5)}
  if(hit){hit.ch=0;Snd.sfx('orb');pickOrb(hit.i)}
 }
 function choose(btn,o){
