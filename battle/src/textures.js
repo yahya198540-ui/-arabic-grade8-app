@@ -113,3 +113,94 @@ export function star(color = '#ffd84a') {
   for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, d = i % 2 ? 11 : 27; g.lineTo(Math.cos(a) * d, Math.sin(a) * d); } g.closePath(); g.fill(); g.stroke();
   return new THREE.CanvasTexture(c);
 }
+
+/* ====== خامات الجولة الثانية (تفاصيل أعلى) ====== */
+/* وجه الطالب مرسوم على كرة الرأس (الوجه الأمامي عند u=0.25؛ كل راديان ≈ 163 بكسل) */
+export function face() {
+  const [c, g] = cv(1024, 512); const cx = 256, cy = 256;
+  const gr = g.createLinearGradient(0, 0, 0, 512); gr.addColorStop(0, '#b97c4c'); gr.addColorStop(.5, '#d4a06b'); gr.addColorStop(1, '#bd8453');
+  g.fillStyle = gr; g.fillRect(0, 0, 1024, 512);
+  const rg = g.createRadialGradient(cx, cy + 10, 10, cx, cy + 10, 190); rg.addColorStop(0, 'rgba(255,225,185,.45)'); rg.addColorStop(1, 'rgba(255,225,185,0)'); g.fillStyle = rg; g.fillRect(0, 0, 1024, 512);
+  // الشعر أعلى الجبهة وعند الصدغين
+  g.fillStyle = '#17120f'; g.beginPath(); g.rect(0, 0, 1024, 118); g.fill();
+  for (const s of [-1, 1]) { g.beginPath(); g.moveTo(cx + s * 150, 100); g.quadraticCurveTo(cx + s * 215, 150, cx + s * 205, 275); g.lineTo(cx + s * 178, 255); g.quadraticCurveTo(cx + s * 180, 160, cx + s * 130, 112); g.fill(); }
+  g.fillStyle = '#17120f'; g.fillRect(0, 0, 40, 512); g.fillRect(984, 0, 40, 512);
+  for (const s of [-1, 1]) {
+    const ex = cx + s * 62, ey = cy - 14;
+    // وجنتان
+    const ch = g.createRadialGradient(cx + s * 98, cy + 46, 2, cx + s * 98, cy + 46, 34); ch.addColorStop(0, 'rgba(235,110,90,.5)'); ch.addColorStop(1, 'rgba(235,110,90,0)'); g.fillStyle = ch; g.fillRect(cx + s * 98 - 40, cy + 6, 80, 80);
+    // بياض العين
+    g.fillStyle = '#fffdf8'; g.beginPath(); g.ellipse(ex, ey, 31, 26, 0, 0, 7); g.fill();
+    g.strokeStyle = 'rgba(80,40,20,.35)'; g.lineWidth = 2; g.stroke();
+    // القزحية
+    const ig = g.createRadialGradient(ex + s * 2, ey, 2, ex + s * 2, ey, 19); ig.addColorStop(0, '#2b1707'); ig.addColorStop(.45, '#7b4a1f'); ig.addColorStop(1, '#3d220c');
+    g.fillStyle = ig; g.beginPath(); g.arc(ex + s * 2, ey + 1, 19, 0, 7); g.fill();
+    g.fillStyle = '#0a0503'; g.beginPath(); g.arc(ex + s * 2, ey + 1, 9, 0, 7); g.fill();
+    g.fillStyle = '#fff'; g.beginPath(); g.arc(ex - 5, ey - 7, 5.5, 0, 7); g.fill(); g.beginPath(); g.arc(ex + 8, ey + 7, 2.6, 0, 7); g.fill();
+    // الجفن العلوي والرموش
+    g.strokeStyle = '#1a0f08'; g.lineWidth = 6; g.lineCap = 'round'; g.beginPath(); g.ellipse(ex, ey + 2, 33, 27, 0, Math.PI * 1.05, Math.PI * 1.95); g.stroke();
+    g.lineWidth = 4; g.beginPath(); g.moveTo(ex + s * 30, ey - 6); g.lineTo(ex + s * 42, ey - 14); g.stroke();
+    // الحاجب (مصمّم)
+    g.strokeStyle = '#1a120c'; g.lineWidth = 10; g.beginPath(); g.moveTo(ex - s * 30, ey - 38); g.quadraticCurveTo(ex + s * 4, ey - 56, ex + s * 38, ey - 40); g.stroke();
+  }
+  // الأنف والفم
+  g.strokeStyle = 'rgba(120,64,34,.55)'; g.lineWidth = 5; g.lineCap = 'round'; g.beginPath(); g.moveTo(cx - 4, cy + 4); g.quadraticCurveTo(cx - 14, cy + 30, cx, cy + 34); g.stroke();
+  g.fillStyle = 'rgba(120,64,34,.35)'; g.beginPath(); g.ellipse(cx - 12, cy + 34, 7, 4, 0, 0, 7); g.ellipse(cx + 12, cy + 34, 7, 4, 0, 0, 7); g.fill();
+  g.strokeStyle = '#6a2a1c'; g.lineWidth = 6; g.beginPath(); g.moveTo(cx - 30, cy + 62); g.quadraticCurveTo(cx, cy + 86, cx + 30, cy + 62); g.stroke();
+  g.fillStyle = '#fff'; g.beginPath(); g.moveTo(cx - 22, cy + 68); g.quadraticCurveTo(cx, cy + 82, cx + 22, cy + 68); g.quadraticCurveTo(cx, cy + 74, cx - 22, cy + 68); g.fill();
+  return tex(c, 0, 8);
+}
+/* شاشة وجه الروبوت: عينان متوهجتان على زجاج داكن */
+export function visor(color = '#ffc400', style = 0) {
+  const hex = '#' + new THREE.Color(color).getHexString();
+  const mk = (glowOnly) => {
+    const [c, g] = cv(1024, 512); const cx = 256, cy = 256;
+    if (!glowOnly) { const bg = g.createLinearGradient(0, 0, 0, 512); bg.addColorStop(0, '#222c46'); bg.addColorStop(.5, '#0a0e1c'); bg.addColorStop(1, '#141a2e'); g.fillStyle = bg; g.fillRect(0, 0, 1024, 512); g.fillStyle = 'rgba(255,255,255,.07)'; g.beginPath(); g.moveTo(cx - 140, 90); g.lineTo(cx - 40, 90); g.lineTo(cx - 120, 420); g.lineTo(cx - 220, 420); g.fill(); }
+    else { g.fillStyle = '#000'; g.fillRect(0, 0, 1024, 512); }
+    g.shadowColor = hex; g.shadowBlur = 26; g.fillStyle = hex;
+    for (const s of [-1, 1]) {
+      const ex = cx + s * 58, ey = cy;
+      g.save(); g.translate(ex, ey); if (style === 1) g.rotate(s * 0.35); // غاضب
+      if (style === 2) { g.beginPath(); g.arc(0, 0, 26, 0, 7); g.fill(); } else { g.beginPath(); g.roundRect(-26, -22, 52, 44, 18); g.fill(); }
+      g.shadowBlur = 0; g.fillStyle = glowOnly ? '#fff' : 'rgba(255,255,255,.85)'; g.beginPath(); g.arc(-4, -5, 8, 0, 7); g.fill(); g.fillStyle = hex; g.shadowBlur = 26;
+      g.restore();
+    }
+    return c;
+  };
+  return [tex(mk(false), 0, 8), tex(mk(true), 0, 4)];
+}
+export function plate() {
+  const [c, g] = cv(256, 256); g.fillStyle = '#fff'; g.fillRect(0, 0, 256, 256);
+  g.strokeStyle = 'rgba(70,80,100,.55)'; g.lineWidth = 4;
+  g.strokeRect(6, 6, 244, 244); g.beginPath(); g.moveTo(6, 128); g.lineTo(250, 128); g.moveTo(128, 6); g.lineTo(128, 128); g.moveTo(80, 128); g.lineTo(80, 250); g.stroke();
+  g.fillStyle = 'rgba(60,70,90,.5)'; for (const [x, y] of [[20, 20], [236, 20], [20, 236], [236, 236], [114, 114], [142, 142]]) { g.beginPath(); g.arc(x, y, 5, 0, 7); g.fill(); }
+  g.fillStyle = 'rgba(90,100,120,.35)'; for (let i = 0; i < 6; i++) g.fillRect(150 + i * 14, 150, 8, 70);
+  g.fillStyle = 'rgba(255,255,255,.0)'; return tex(c, 0, 8);
+}
+export function letterTex(ch, color = '#ffd24a') {
+  const [c, g] = cv(256, 256); g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = '900 190px "Noto Naskh Arabic","Segoe UI",Tahoma,"DejaVu Sans",sans-serif';
+  g.shadowColor = '#ffb300'; g.shadowBlur = 30; g.lineWidth = 12; g.strokeStyle = '#8a4a00'; g.strokeText(ch, 128, 140); g.fillStyle = color; g.fillText(ch, 128, 140);
+  g.shadowBlur = 0; g.fillStyle = 'rgba(255,255,255,.55)'; g.save(); g.globalCompositeOperation = 'source-atop'; g.fillRect(0, 60, 256, 40); g.restore();
+  return new THREE.CanvasTexture(c);
+}
+export function banner() {
+  const [c, g] = cv(256, 512); g.fillStyle = '#b3121f'; g.fillRect(0, 0, 256, 512);
+  const gr = g.createLinearGradient(0, 0, 256, 0); gr.addColorStop(0, 'rgba(0,0,0,.25)'); gr.addColorStop(.5, 'rgba(255,255,255,.12)'); gr.addColorStop(1, 'rgba(0,0,0,.25)'); g.fillStyle = gr; g.fillRect(0, 0, 256, 512);
+  g.strokeStyle = '#f2c14e'; g.lineWidth = 10; g.strokeRect(12, 12, 232, 488);
+  g.fillStyle = '#f2c14e'; g.beginPath(); g.moveTo(0, 512); g.lineTo(128, 440); g.lineTo(256, 512); g.lineTo(256, 480); g.lineTo(128, 410); g.lineTo(0, 480); g.fill();
+  // كتاب مفتوح
+  g.translate(128, 210); g.fillStyle = '#fff3d0'; g.strokeStyle = '#f2c14e'; g.lineWidth = 6;
+  g.beginPath(); g.moveTo(0, -30); g.quadraticCurveTo(-50, -60, -92, -36); g.lineTo(-92, 50); g.quadraticCurveTo(-50, 26, 0, 56); g.closePath(); g.fill(); g.stroke();
+  g.beginPath(); g.moveTo(0, -30); g.quadraticCurveTo(50, -60, 92, -36); g.lineTo(92, 50); g.quadraticCurveTo(50, 26, 0, 56); g.closePath(); g.fill(); g.stroke();
+  g.strokeStyle = 'rgba(120,80,30,.5)'; g.lineWidth = 3; for (let i = 0; i < 4; i++) { g.beginPath(); g.moveTo(-80, -20 + i * 16); g.lineTo(-14, -16 + i * 16); g.moveTo(14, -16 + i * 16); g.lineTo(80, -20 + i * 16); g.stroke(); }
+  return tex(c);
+}
+export function cloudTex() {
+  const [c, g] = cv(256, 128);
+  for (let i = 0; i < 14; i++) { const x = 40 + rnd() * 176, y = 50 + rnd() * 36, r = 26 + rnd() * 26, gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, 'rgba(255,255,255,.95)'); gr.addColorStop(.6, 'rgba(255,255,255,.55)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2); }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+export function streak() {
+  const [c, g] = cv(128, 16); const gr = g.createLinearGradient(0, 0, 128, 0); gr.addColorStop(0, 'rgba(120,255,200,0)'); gr.addColorStop(.7, 'rgba(160,255,220,.9)'); gr.addColorStop(1, 'rgba(255,255,255,1)'); g.fillStyle = gr; g.fillRect(0, 4, 128, 8);
+  return new THREE.CanvasTexture(c);
+}

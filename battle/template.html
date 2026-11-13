@@ -20,6 +20,7 @@ button{font-family:inherit;cursor:pointer;border:0;color:inherit}
 
 /* ===== واجهة اللعب ===== */
 #hud>*{position:absolute}
+#hud.vic~#xhair{display:none}
 .badge{display:flex;align-items:center;gap:calc(var(--u)*.7);padding:calc(var(--u)*.55) calc(var(--u)*1.4);font-weight:800;font-size:calc(var(--u)*1.7);white-space:nowrap}
 #bSub{left:calc(var(--u)*1);top:calc(var(--u)*1)}
 #bGrade{left:calc(var(--u)*1);top:calc(var(--u)*4.7)}
@@ -54,7 +55,7 @@ button{font-family:inherit;cursor:pointer;border:0;color:inherit}
 #dots i.done{background:var(--green);border-color:#caffdf}
 @keyframes pulse{50%{transform:scale(1.2)}}
 #credit{left:50%;bottom:calc(var(--u)*.7);transform:translateX(-50%);font-size:calc(var(--u)*1.5);font-weight:700;color:#fff;text-shadow:0 calc(var(--u)*.15) calc(var(--u)*.5) #000,0 0 calc(var(--u)*1) #000;white-space:nowrap}
-#hint{left:50%;bottom:calc(var(--u)*4.4);transform:translateX(-50%);padding:calc(var(--u)*.6) calc(var(--u)*2);font-size:calc(var(--u)*1.7);font-weight:700;transition:opacity 1s;white-space:nowrap}
+#hint{left:50%;bottom:calc(var(--u)*8.2);transform:translateX(-50%);padding:calc(var(--u)*.6) calc(var(--u)*2);font-size:calc(var(--u)*1.7);font-weight:700;transition:opacity 1s;white-space:nowrap}
 
 /* ===== نافذة السؤال ===== */
 #panel{position:absolute;left:27%;width:46%;top:calc(var(--u)*10);padding:calc(var(--u)*.9) calc(var(--u)*1.4) calc(var(--u)*1);transition:opacity .35s,transform .35s;transform-origin:50% 0}
@@ -84,9 +85,10 @@ button{font-family:inherit;cursor:pointer;border:0;color:inherit}
 #fb.good{background:linear-gradient(180deg,rgba(24,140,76,.95),rgba(14,96,52,.95));border:calc(var(--u)*.2) solid #7dffb0}
 #fb.bad{background:linear-gradient(180deg,rgba(190,40,60,.95),rgba(130,20,40,.95));border:calc(var(--u)*.2) solid #ff9aa6}
 #fbt{flex:1}
+#hud.nx #weapon,#hud.nx #hint{display:none}
 #fbt b{display:block;font-size:calc(var(--u)*2.3);font-weight:900;line-height:1.3}
 #fbt span{display:block;font-size:calc(var(--u)*1.75);font-weight:700;line-height:1.5;color:#effff4}
-#nextBtn{flex:none;font-size:calc(var(--u)*2.1);font-weight:900;color:#4a2600;padding:calc(var(--u)*.9) calc(var(--u)*2.2);border-radius:calc(var(--u)*1.1);background:linear-gradient(180deg,#ffe27a,#f5a81c);border:calc(var(--u)*.2) solid #fff3bf;box-shadow:0 calc(var(--u)*.35) 0 #a85d00;animation:pulse 1.4s infinite}
+#nextBtn{position:absolute;left:0;right:0;margin:0 auto;width:max-content;bottom:calc(var(--u)*2.5);z-index:5;font-size:calc(var(--u)*2.4);font-weight:900;color:#4a2600;padding:calc(var(--u)*.6) calc(var(--u)*4);border-radius:calc(var(--u)*2);background:linear-gradient(180deg,#ffe27a,#f5a81c);border:calc(var(--u)*.2) solid #fff3bf;box-shadow:0 calc(var(--u)*.35) 0 #a85d00;animation:pulse 1.4s infinite}
 #nextBtn:active{transform:translateY(calc(var(--u)*.2))}
 
 /* ===== وميض الشاشة ===== */
@@ -132,6 +134,28 @@ button{font-family:inherit;cursor:pointer;border:0;color:inherit}
 #confirm p{margin:0 0 calc(var(--u)*1.6);font-size:calc(var(--u)*3);font-weight:800}
 #confirm button{font-size:calc(var(--u)*2.4);font-weight:800;padding:calc(var(--u)*.8) calc(var(--u)*3);border-radius:calc(var(--u)*1);margin:0 calc(var(--u)*.6);border:calc(var(--u)*.2) solid #fff}
 #cYes{background:linear-gradient(180deg,#ff8a8a,#d62839)}#cNo{background:linear-gradient(180deg,#4f9bff,#1b45a8)}
+
+#radar{left:calc(var(--u)*1.4);top:calc(var(--u)*12.6);width:calc(var(--u)*9.2);height:calc(var(--u)*9.2);filter:drop-shadow(0 calc(var(--u)*.3) calc(var(--u)*.6) rgba(0,0,0,.45))}
+#feed{left:calc(var(--u)*11.2);top:calc(var(--u)*13);display:flex;flex-direction:column;gap:calc(var(--u)*.5);width:calc(var(--u)*16)}
+.fd{padding:calc(var(--u)*.35) calc(var(--u)*1.1);font-size:calc(var(--u)*1.35);white-space:nowrap;width:max-content;font-weight:800;transition:opacity .6s;animation:fin .4s}
+@keyframes fin{from{transform:translateX(calc(var(--u)*-4));opacity:0}}
+#weapon{left:50%;transform:translateX(-50%);bottom:calc(var(--u)*3.3);display:flex;align-items:center;gap:calc(var(--u)*1);padding:calc(var(--u)*.4) calc(var(--u)*1.3)}
+#weapon>span{font-size:calc(var(--u)*2.6)}#weapon small{display:block;line-height:1.3;font-size:calc(var(--u)*1.1);color:#9fd3ff;font-weight:700}#weapon b{font-size:calc(var(--u)*1.6)}#weapon em{font-style:normal;font-size:calc(var(--u)*2.8);font-weight:900;color:#7dffd0;margin-inline-start:calc(var(--u)*.6)}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 55%,rgba(5,15,45,.38) 100%)}
+#xhair{position:absolute;left:50%;top:50%;width:0;height:0;transition:opacity .3s}
+#xhair i{position:absolute;background:#fff;box-shadow:0 0 calc(var(--u)*.4) #000,0 0 calc(var(--u)*.8) #4dd8ff}
+#xhair i:nth-child(1){left:calc(var(--u)*-.1);top:calc(var(--u)*-1.9);width:calc(var(--u)*.2);height:calc(var(--u)*1.1)}
+#xhair i:nth-child(2){left:calc(var(--u)*-.1);top:calc(var(--u)*.8);width:calc(var(--u)*.2);height:calc(var(--u)*1.1)}
+#xhair i:nth-child(3){top:calc(var(--u)*-.1);left:calc(var(--u)*-1.9);height:calc(var(--u)*.2);width:calc(var(--u)*1.1)}
+#xhair i:nth-child(4){top:calc(var(--u)*-.1);left:calc(var(--u)*.8);height:calc(var(--u)*.2);width:calc(var(--u)*1.1)}
+#hitm{position:absolute;width:0;height:0;opacity:0}
+#hitm.on{animation:hm .35s ease-out}
+#hitm i{position:absolute;left:calc(var(--u)*-.15);top:calc(var(--u)*-2.4);width:calc(var(--u)*.3);height:calc(var(--u)*1.5);background:#fff;box-shadow:0 0 calc(var(--u)*.6) #ff4d5e;transform-origin:50% calc(var(--u)*2.4)}
+#hitm i:nth-child(1){transform:rotate(45deg)}#hitm i:nth-child(2){transform:rotate(135deg)}#hitm i:nth-child(3){transform:rotate(225deg)}#hitm i:nth-child(4){transform:rotate(315deg)}
+@keyframes hm{0%{opacity:1;transform:scale(1.8)}100%{opacity:0;transform:scale(.8)}}
+.fl{position:absolute;transform:translate(-50%,-50%);font-size:calc(var(--u)*2.6);font-weight:900;color:#fff;text-shadow:0 0 calc(var(--u)*.8) #ff4d5e,0 calc(var(--u)*.2) 0 #8a0f1f;-webkit-text-stroke:calc(var(--u)*.1) #8a0f1f;animation:fl 1.2s ease-out forwards;pointer-events:none}
+@keyframes fl{0%{opacity:0;transform:translate(-50%,-30%) scale(.5)}15%{opacity:1;transform:translate(-50%,-50%) scale(1.25)}100%{opacity:0;transform:translate(-50%,-260%) scale(1)}}
+#hud.vic #radar,#hud.vic #feed{display:none}
 #hud.vic>*:not(#tools){display:none}
 @media (max-aspect-ratio:3/2){#panel{left:12%;width:76%;top:calc(var(--u)*13)}}
 </style>
@@ -156,14 +180,21 @@ button{font-family:inherit;cursor:pointer;border:0;color:inherit}
     <div id="energy" class="glass"><div id="portrait"><svg viewBox="0 0 100 100"><defs><pattern id="kp" width="14" height="22" patternUnits="userSpaceOnUse"><rect width="14" height="22" fill="#fbf8ef"/><path d="M7 3l4 6-4 6-4-6z" fill="none" stroke="#2a4fb0" stroke-width="1.6"/><circle cx="7" cy="9" r="1.4" fill="#2a4fb0"/></pattern></defs><circle cx="50" cy="50" r="50" fill="#5db4ea"/><path d="M14 100c2-22 18-26 36-26s34 4 36 26z" fill="#fff"/><ellipse cx="50" cy="52" rx="27" ry="29" fill="#c98a58"/><ellipse cx="24" cy="55" rx="4.5" ry="7" fill="#c98a58"/><ellipse cx="76" cy="55" rx="4.5" ry="7" fill="#c98a58"/><path d="M22 46c0-22 12-30 28-30s28 8 28 30c-4-10-14-14-28-14s-24 4-28 14z" fill="#1b1b22"/><path d="M23 40c1-6 4-26 27-26s26 20 27 26c-2 3-6 4-8 4V28H31v16c-3 0-6-1-8-4z" fill="url(#kp)" stroke="#2a4fb0" stroke-width="1.4"/><rect x="24" y="30" width="52" height="5" fill="#2a4fb0" opacity=".85"/><ellipse cx="39" cy="56" rx="6" ry="6.8" fill="#fff"/><ellipse cx="61" cy="56" rx="6" ry="6.8" fill="#fff"/><circle cx="40.5" cy="57" r="3.6" fill="#2a1a0f"/><circle cx="62.5" cy="57" r="3.6" fill="#2a1a0f"/><circle cx="42" cy="55.5" r="1.2" fill="#fff"/><circle cx="64" cy="55.5" r="1.2" fill="#fff"/><path d="M32 47l14-2M68 47l-14-2" stroke="#1b1b22" stroke-width="3" stroke-linecap="round"/><path d="M41 70q9 8 18 0" fill="none" stroke="#6a2a1c" stroke-width="3" stroke-linecap="round"/></svg></div><div><label>الطاقة</label><div class="ebar"><i>❤</i><div class="track"><div id="eFill"></div></div></div></div></div>
     <div id="prog" class="glass"><label>التقدم</label><div id="dots"></div></div>
     <div id="hint" class="glass">وجّه اللاعب بالأسهم أو WASD — أو اسحب بالإصبع</div>
+    <canvas id="radar" width="230" height="230"></canvas>
+    <div id="feed"></div>
+    <div id="weapon" class="glass"><span>⚡</span><div><small>السلاح</small><b>مدفع الطاقة</b></div><em>∞</em></div>
     <div id="credit">إعداد: أ. يحيى الجابري</div>
   </div>
   <div id="panel" class="glass off">
     <div id="chips"><span class="chip g" id="chEnc"></span><span class="chip" id="chStu"></span></div>
     <div id="qtext"></div>
     <div id="answers"></div>
-    <div id="fb" class="empty"><div id="fbt"><b></b><span></span></div><button id="nextBtn" class="hidden">المواجهة التالية ◀</button></div>
+    <div id="fb" class="empty"><div id="fbt"><b></b><span></span></div></div>
   </div>
+  <div id="vig"></div>
+  <div id="xhair"><i></i><i></i><i></i><i></i></div>
+  <div id="hitm"><i></i><i></i><i></i><i></i></div>
+  <button id="nextBtn" class="hidden">المواجهة التالية ◀</button>
   <div id="flash"></div>
   <div id="start">
     <div class="kick glass">⚔ لعبة التقويم الختامي ⚔</div>
