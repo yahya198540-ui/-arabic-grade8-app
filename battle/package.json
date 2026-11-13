@@ -1,0 +1,9 @@
+{
+  "name": "battle-of-lost-letters",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": { "build": "node build.mjs", "test": "node test/play.mjs" },
+  "dependencies": { "three": "0.160.0" },
+  "devDependencies": { "esbuild": "^0.19.12" }
+}
