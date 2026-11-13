@@ -3,7 +3,7 @@ const { chromium } = require('playwright'); const path = require('path');
   const b = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--no-sandbox'] });
   const p = await b.newPage({ viewport: { width: 640, height: 360 } }); const errs = [];
   p.on('pageerror', e => errs.push(e.message));
-  await p.goto('file://' + path.resolve(__dirname, '../dist/index.html') + '?q=low&dtmax=0.3'); await p.waitForTimeout(1200);
+  await p.goto('file://' + path.resolve(__dirname, '../dist/index.html') + '?q=low&dtmax=0.3'); await p.waitForFunction(() => window.__game, null, { timeout: 60000 }); await p.waitForTimeout(500);
   await p.evaluate(() => document.getElementById('start').classList.add('hidden'));
   for (const [n, key] of [[0, 'ArrowLeft'], [1, 'ArrowRight'], [2, 'KeyA'], [3, 'KeyD'], [4, 'ArrowLeft'], [5, 'ArrowRight']]) {
     await p.evaluate((n) => __game.jump(n), n); await p.keyboard.down(key);

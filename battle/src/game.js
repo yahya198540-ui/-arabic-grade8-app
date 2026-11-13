@@ -2,7 +2,9 @@ import * as THREE from 'three';
 import { META, QUESTIONS, LETTERS } from './questions.js';
 import * as A from './audio.js';
 import * as T from './textures.js';
-import { makePlayer, makeRobot, ROBOT_SPECS, MINION_SPECS } from './chars.js';
+import { makePlayer, makeVillain, VILLAIN_SPECS as ROBOT_SPECS, MINION_SPECS } from './humans.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import soldierBin from '../assets/Soldier.glb';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
@@ -11,6 +13,7 @@ import { buildWorld, ENC, SEP, collide } from './world.js';
 import { Particles } from './particles.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
+function boot(GLTF) {
 const $ = (id) => document.getElementById(id);
 const V3 = THREE.Vector3;
 const params = new URLSearchParams(location.search);
@@ -28,7 +31,7 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 const scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0xe4e2d2, 70, 380);
+scene.fog = new THREE.Fog(0xe4e2d2, 80, 520);
 const camera = new THREE.PerspectiveCamera(48, 16 / 9, 0.1, 1200);
 const hemi = new THREE.HemisphereLight(0xcfeaff, 0xd9bf86, 1.05); scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xfff0d2, 2.6); sun.castShadow = true;
@@ -38,8 +41,8 @@ scene.add(new THREE.DirectionalLight(0x9fd0ff, 0.5).translateX(30).translateY(10
 const pmrem = new THREE.PMREMGenerator(renderer); const envTex = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
 const world = buildWorld(scene, 'high');
-const player = makePlayer(); scene.add(player.group);
-const robots = ROBOT_SPECS.map(s => { const r = makeRobot(s); r.group.visible = false; scene.add(r.group); return r; });
+const player = makePlayer(GLTF); scene.add(player.group);
+const robots = ROBOT_SPECS.map(s => { const r = makeVillain(GLTF, s); r.group.visible = false; scene.add(r.group); return r; });
 scene.traverse(o => { const ms = o.material ? [].concat(o.material) : []; ms.forEach(m => { if (m.metalness > 0.3) { m.envMap = envTex; m.envMapIntensity = 0.9; } }); });
 const glowP = new Particles(scene, 900, T.glow('255,255,255'), true);
 const starP = new Particles(scene, 300, T.star('#ffd84a'), true);
@@ -50,8 +53,8 @@ const balls = [0, 1, 2].map(() => { const b = new THREE.Group(); b.add(new THREE
   const gl = new THREE.Sprite(new THREE.SpriteMaterial({ map: T.glow('80,255,170'), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true })); gl.scale.setScalar(2.8); b.add(gl); b.visible = false; scene.add(b); return b; });
 const tracers = [0, 1, 2].map(() => { const m = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1, 6), new THREE.MeshBasicMaterial({ color: new THREE.Color(1.2, 3, 2.4), transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false })); m.visible = false; scene.add(m); return m; });
 const muzzleLight = new THREE.PointLight(0x7dffd0, 0, 14); scene.add(muzzleLight);
-const minions = [MINION_SPECS[0], MINION_SPECS[1]].map(s => { const r = makeRobot(s); r.group.visible = false; r.spec = s; scene.add(r.group); return r; });
-const NAMES = ['الروبوت الحارس', 'المسيّرة الزرقاء', 'الجندي الأخضر', 'الدبابة النارية', 'الفارس البنفسجي', 'الزعيم الذهبي'];
+const minions = [MINION_SPECS[0], MINION_SPECS[1]].map(s => { const r = makeVillain(GLTF, s); r.group.visible = false; r.spec = s; scene.add(r.group); return r; });
+const NAMES = ROBOT_SPECS.map(s => s.name);
 
 /* ====================== الحالة ====================== */
 const E = ENC.map(e => {
@@ -111,7 +114,7 @@ function choose(i, btn) {
     A.sfx.wrong(); A.sfx.hurt(); flashScreen('r');
     const pn = $('panel'); pn.classList.remove('shake'); void pn.offsetWidth; pn.classList.add('shake');
     player.hurt = 1;
-    const r = S.robot; if (r) { const from = r.center(), to = player.group.position.clone().setY(1.4); for (let k = 0; k < 14; k++) { const d = to.clone().sub(from).normalize(); glowP.emit(from.x, from.y, from.z, d.x * 9 + (Math.random() - .5) * 2, d.y * 9 + (Math.random() - .5) * 2, d.z * 9 + (Math.random() - .5) * 2, 0xff5a6a, 1.0, 0.45, 0, 0.5); } r.flash(0.5); }
+    const r = S.robot; if (r) { const from = new V3(); r.muzzle.getWorldPosition(from); r.fire(); const to = player.group.position.clone().setY(1.4); for (let k = 0; k < 14; k++) { const d = to.clone().sub(from).normalize(); glowP.emit(from.x, from.y, from.z, d.x * 9 + (Math.random() - .5) * 2, d.y * 9 + (Math.random() - .5) * 2, d.z * 9 + (Math.random() - .5) * 2, 0xff5a6a, 1.0, 0.45, 0, 0.5); } r.flash(0.5); }
     glowP.burst(player.group.position.clone().setY(1.4), 20, 0xff5a6a, 4, 0.7, 0.5);
   }
 }
@@ -127,7 +130,7 @@ function startGame() {
   setScore(); setEnergy(); setEnc(); beginLeg(); S.hintT = 0; $('hint').style.opacity = 1;
 }
 function beginLeg() {
-  const e = E[S.enc]; S.mode = 'walk'; S.wp = e.route.slice(1).map(v => v.clone()); S.legT = 0; S.spawned = false; S.rState = 'none'; S.robot = null; S.camTarget = 0; setEnc();
+  const e = E[S.enc]; player.aimAt = null; S.mode = 'walk'; S.wp = e.route.slice(1).map(v => v.clone()); S.legT = 0; S.spawned = false; S.rState = 'none'; S.robot = null; S.camTarget = 0; setEnc();
 }
 function spawnRobot() {
   const e = E[S.enc], r = robots[S.enc]; S.robot = r; S.spawned = true; S.rState = 'walk';
@@ -138,9 +141,9 @@ function spawnRobot() {
   const slots = [e.R.clone().addScaledVector(e.f, 3).addScaledVector(e.r, 2.2), e.R.clone().addScaledVector(e.f, 6).addScaledVector(e.r, 4.8)];
   const froms = [e.spawn.clone().addScaledVector(e.f, 12).addScaledVector(e.r, 8), e.R.clone().addScaledVector(e.f, 22).addScaledVector(e.r, -16)];
   S.minions = minions.map((m, i) => {
-    m.group.visible = true; m.group.position.copy(froms[i]); m.group.position.y = 2.2; m.group.scale.setScalar(0.01); m.group.rotation.set(0, 0, 0); m.root.rotation.set(0, 0, 0); m.flashT = 0; m.threat = 0; m.spawnT = -0.25 - i * 0.2; m.reticle.material.opacity = 0; m.bar.visible = false;
-    glowP.burst(froms[i].clone().setY(2.2), 18, 0xff8bd0, 5, 1.0, 0.6);
-    return { r: m, target: slots[i].setY(i ? 4.6 : 3.0), state: 'fly' };
+    m.group.visible = true; m.group.position.copy(froms[i]); m.group.position.y = 0; m.group.scale.setScalar(0.01); m.group.rotation.set(0, 0, 0); m.root.rotation.set(0, 0, 0); m.flashT = 0; m.threat = 0; m.spawnT = -0.25 - i * 0.2; m.reticle.material.opacity = 0; m.bar.visible = false;
+    glowP.burst(froms[i].clone().setY(1.2), 18, 0xff8bd0, 5, 1.0, 0.6);
+    return { r: m, target: slots[i].setY(0), state: 'fly' };
   });
 }
 function updateMinions(dt) {
@@ -154,7 +157,7 @@ function updateMinions(dt) {
       if (d < 0.25) mn.state = 'ready'; else { to.normalize(); r.group.position.addScaledVector(to, Math.min(d, 9 * dt)); r.group.rotation.y += angDiff(r.group.rotation.y, Math.atan2(to.x, to.z)) * (1 - Math.exp(-10 * dt)); }
     } else if (mn.state === 'ready') {
       r.threat += (1 - r.threat) * (1 - Math.exp(-5 * dt)); r.group.rotation.y += angDiff(r.group.rotation.y, yawTo(r.group.position, player.group.position)) * (1 - Math.exp(-6 * dt));
-      r.group.position.y = mn.target.y + Math.sin(S.t * 2.4 + r.spec.scale * 9) * 0.18;
+      r.aimAt = player.group.position.clone().setY(1.3);
     }
   }
 }
@@ -210,7 +213,7 @@ function updateWalk(dt) {
   if (final && dist < 0.4 && S.rState !== 'ready') player.update(0, 0);
 }
 function updateRobot(dt) {
-  const r = S.robot; if (!r) return;
+  const r = S.robot; if (!r) return; r.aimAt = player.group.position.clone().setY(1.3);
   const e = E[S.enc]; r.update(dt, S.rState === 'walk');
   if (S.rState === 'walk') {
     r.spawnT += dt; const k = clamp(r.spawnT / 0.5, 0, 1); r.group.scale.setScalar(Math.max(0.01, ease(k)) * ROBOT_SPECS[S.enc].scale);
@@ -223,7 +226,7 @@ function updateRobot(dt) {
 }
 function engage() {
   S.mode = 'engage'; S.engT = 0; S.rState = 'threat'; S.hintT = 99;
-  const r = S.robot; r.bar.visible = true; r.fill.scale.x = 1.6; r.fill.position.x = 0;
+  const r = S.robot; player.aimAt = r.group.position.clone().setY(1.3); r.bar.visible = true; r.fill.scale.x = 1.6; r.fill.position.x = 0;
 }
 function updateEngage(dt) {
   const e = E[S.enc], r = S.robot; S.engT += dt;
@@ -251,7 +254,7 @@ function feed(text) { const d = document.createElement('div'); d.className = 'fd
 function fireShot(sh, idx) {
   A.sfx.shoot(); player.aim = 1; player.kick(); S.shake = Math.max(S.shake, 0.22); muzzleLight.intensity = 6;
   player.group.updateMatrixWorld(true); const m = new V3(); player.muzzle.getWorldPosition(m); sh.r.group.updateMatrixWorld(true);
-  sh.from = m; sh.to = sh.r.center(); sh.bt = 0; sh.fired = true; balls[idx].visible = true; glowP.burst(m, 16, 0x9affd0, 4.5, 1.0, 0.3);
+  player.aimAt = sh.r.center(); sh.from = m; sh.to = sh.r.center(); sh.bt = 0; sh.fired = true; balls[idx].visible = true; glowP.burst(m, 16, 0x9affd0, 4.5, 1.0, 0.3);
   const tr = tracers[idx], d = sh.to.clone().sub(m), L = d.length(); tr.visible = true; tr.position.copy(m).addScaledVector(d, 0.5); tr.scale.set(1, L, 1); tr.quaternion.setFromUnitVectors(new V3(0, 1, 0), d.normalize()); tr.material.opacity = 1; sh.tracer = tr;
 }
 function updateDefeat(dt) {
@@ -270,14 +273,14 @@ function updateDefeat(dt) {
     }
     if (sh.hit && !sh.done) {
       sh.ht += dt; const t = sh.ht, back = e.r.clone();
-      if (t < 0.5) { r.group.position.addScaledVector(back, dt * 3.2 * (1 - t / 0.5)); r.root.rotation.z = -Math.sin(t / 0.5 * Math.PI) * 0.5; r.root.rotation.x = -t * 0.8; }
-      else { r.group.rotation.y += dt * 16; r.root.position.y = Math.sin((t - 0.5) / 0.6 * Math.PI) * 1.4; const k = clamp((t - 0.5) / 0.6, 0, 1); r.group.scale.setScalar(Math.max(0.001, sh.scale * (1 - ease(k)))); }
+      if (t < 0.55) { r.group.position.addScaledVector(back, dt * 2.6 * (1 - t / 0.55)); r.root.rotation.x = -ease(t / 0.55) * 1.45; }
+      else { const k = clamp((t - 0.7) / 0.45, 0, 1); r.group.scale.setScalar(Math.max(0.001, sh.scale * (1 - ease(k)))); }
       if (sh.main) { r.fill.scale.x = Math.max(0.001, 1.6 * (1 - clamp(t / 0.4, 0, 1))); r.bar.visible = t < 0.6; }
       if (t > 0.1 && t < 1.1 && Math.random() < 0.7) { const a = S.t * 8, c = r.group.position; starP.emit(c.x + Math.cos(a) * 1.2, c.y + 3.2 * (sh.scale > 0.8 ? 1 : 0.5), c.z + Math.sin(a) * 1.2, 0, 1.2, 0, 0xffd84a, 1.0, 0.7, 0, 0.5); }
       if (t > 1.15) {
         sh.done = true; r.group.visible = false; if (sh.t) sh.t.state = 'dead'; const c = r.group.position.clone().setY(1.4);
-        glowP.burst(c, 34, 0xffd84a, 8, 1.1, 1.0, 2, 2); glowP.burst(c, 14, 0xfff0c0, 5, 1.1, 0.8, 0, 1); starP.burst(c, 18, 0xffd84a, 9, 1.6, 1.2, 3, 4);
-        for (let i = 0; i < 40; i++) confP.emit(c.x, c.y, c.z, (Math.random() - .5) * 9, 3 + Math.random() * 6, (Math.random() - .5) * 9, new THREE.Color().setHSL(Math.random(), 0.9, 0.6), 0.28, 1.6, 9, 0.4);
+        glowP.burst(c, 34, 0xffd84a, 8, 1.1, 1.0, 2, 2); glowP.burst(c, 14, 0xfff0c0, 5, 1.1, 0.8, 0, 1); starP.burst(c, 8, 0xffd84a, 9, 1.3, 1.0, 3, 4);
+        for (let i = 0; i < 22; i++) confP.emit(c.x, c.y, c.z, (Math.random() - .5) * 9, 3 + Math.random() * 6, (Math.random() - .5) * 9, new THREE.Color().setHSL(Math.random(), 0.9, 0.6), 0.28, 1.6, 9, 0.4);
         A.sfx.pop(); feed('🎯 إسقاط ' + (sh.main ? NAMES[S.enc] : 'مسيّرة'));
       }
     }
@@ -436,3 +439,7 @@ syncSfx();
 window.__game = { S, E, QUESTIONS, world, player, robots, start: () => $('goBtn').click(), setQuality,
   jump(n) { startGame(); S.enc = n; pos.copy(E[n].route[0]); camInit = false; for (let i = 0; i < n; i++) { /* مواجهات سابقة */ } beginLeg(); }, win() { startGame(); S.score = 40; S.firstTry = 2; victory(); } };
 requestAnimationFrame(frame);
+
+  $('goBtn').disabled = false; $('goBtn').textContent = 'ابدأ المعركة';
+}
+new GLTFLoader().parse(soldierBin.slice().buffer, '', boot, (e) => { document.getElementById('goBtn').textContent = 'تعذّر تحميل النموذج'; console.error(e); });

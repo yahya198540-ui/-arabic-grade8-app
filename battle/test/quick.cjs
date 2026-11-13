@@ -5,7 +5,7 @@ const W = +process.env.W || 1280, H = +process.env.H || 720; const encs = (proce
   const b = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--no-sandbox'] });
   const p = await b.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: +process.env.DSF || 1 }); const errs = [];
   p.on('console', m => { if (m.type() === 'error') errs.push(m.text()); }); p.on('pageerror', e => errs.push('PAGEERR ' + e.message));
-  await p.goto('file://' + path.resolve(__dirname, '../dist/index.html') + '?q=high&dtmax=0.3'); await p.waitForTimeout(1500);
+  await p.goto('file://' + path.resolve(__dirname, '../dist/index.html') + '?q=high&dtmax=0.3'); await p.waitForFunction(() => window.__game, null, { timeout: 60000 }); await p.waitForTimeout(500);
   await p.evaluate(() => { document.getElementById('start').classList.add('hidden'); });
   for (const n of encs) {
     if (n === 8) { await p.evaluate(() => __game.jump(2)); await p.waitForTimeout(3500); await p.screenshot({ path: OUT + '/walk.png' }); continue; }

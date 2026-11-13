@@ -2,7 +2,7 @@ const { chromium } = require('playwright'); const path = require('path');
 (async () => {
   const b = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--no-sandbox'] });
   const p = await b.newPage({ viewport: { width: 640, height: 360 } });
-  await p.goto('file://' + path.resolve(__dirname, '../dist/index.html') + '?q=low&dtmax=0.3'); await p.waitForTimeout(1500);
+  await p.goto('file://' + path.resolve(__dirname, '../dist/index.html') + '?q=low&dtmax=0.3'); await p.waitForFunction(() => window.__game, null, { timeout: 60000 }); await p.waitForTimeout(500);
   const r = await p.evaluate(() => {
     const { E, world } = __game, out = [];
     const segD = (a, b, c) => { const dx = b.x - a.x, dz = b.z - a.z, t = Math.max(0, Math.min(1, ((c.x - a.x) * dx + (c.z - a.z) * dz) / (dx * dx + dz * dz))); return Math.hypot(a.x + dx * t - c.x, a.z + dz * t - c.z); };

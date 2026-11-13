@@ -3,7 +3,7 @@ const OUT = '/tmp/f'; fs.mkdirSync(OUT, { recursive: true }); const ENC = +proce
 (async () => {
   const b = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--no-sandbox'] });
   const p = await b.newPage({ viewport: { width: 1280, height: 720 } }); const errs = []; p.on('pageerror', e => errs.push(e.message));
-  await p.goto('file://' + path.resolve(__dirname, '../dist/index.html') + '?q=high&dtmax=0.1'); await p.waitForTimeout(1200);
+  await p.goto('file://' + path.resolve(__dirname, '../dist/index.html') + '?q=high&dtmax=0.1'); await p.waitForFunction(() => window.__game, null, { timeout: 60000 }); await p.waitForTimeout(500);
   await p.evaluate(() => document.getElementById('start').classList.add('hidden'));
   await p.evaluate((n) => __game.jump(n), ENC);
   while ((await p.evaluate(() => __game.S.mode)) !== 'question') await p.waitForTimeout(200);

@@ -142,9 +142,9 @@ export function buildWorld(scene, quality) {
     geo.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3)); geo.computeVertexNormals();
     const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 1 })); m.position.set(x, h / 2 - 0.5, z); scene.add(m); return m;
   }
-  hill(88, -26, 30, 32, 0x8d6a4c, 0xcfb089); tower(88, -26, 4.2, 6); const hf = scene.children[scene.children.length - 1]; hf.position.y = 31;
-  flag(88, 38, -26, 5, 8);
-  hill(-92, -28, 26, 26, 0x8d6a4c, 0xcfb089); tower(-92, -28, 3.6, 5); scene.children[scene.children.length - 1].position.y = 25; flag(-92, 31, -28, 4.4, 7);
+  hill(92, -28, 52, 22, 0x8d6a4c, 0xcfb089); tower(92, -28, 4.2, 6); const hf = scene.children[scene.children.length - 1]; hf.position.y = 21;
+  flag(92, 28, -28, 5, 8);
+  hill(-96, -30, 46, 20, 0x8d6a4c, 0xcfb089); tower(-96, -30, 3.6, 5); scene.children[scene.children.length - 1].position.y = 19; flag(-96, 25, -30, 4.4, 7);
   // دوائر الحجارة المتناثرة (صخور صغيرة)
   const rockG = new THREE.IcosahedronGeometry(1, 0), rockM = new THREE.MeshStandardMaterial({ color: 0xa8845a, flatShading: true, roughness: 1 });
   const nr = high ? 40 : 18, rocks = new THREE.InstancedMesh(rockG, rockM, nr), mm = new THREE.Matrix4(), q = new THREE.Quaternion(), ev = new THREE.Euler();

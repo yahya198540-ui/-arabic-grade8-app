@@ -10,14 +10,14 @@ const W = +process.env.W || 1280, H = +process.env.H || 720;
   p.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
   p.on('pageerror', e => errs.push('PAGEERR ' + e.message));
   await p.goto('file://' + path.resolve(__dirname, '../dist/index.html') + '?q=high&dtmax=0.25');
-  await p.waitForTimeout(2500); await p.screenshot({ path: OUT + '/00_menu.png' });
+  await p.waitForFunction(() => window.__game, null, { timeout: 60000 }); await p.waitForTimeout(2500); await p.screenshot({ path: OUT + '/00_menu.png' });
   await p.click('#goBtn', { force: true });
   const mode = () => p.evaluate(() => window.__game.S.mode);
   const waitMode = async (m, ms = 60000) => { const t0 = Date.now(); while (Date.now() - t0 < ms) { if ((await mode()) === m) return true; await p.waitForTimeout(150); } throw new Error('timeout waiting ' + m + ' now ' + await mode()); };
   const wrongPick = [0, 0, 2, 1, 0, 1]; // خيار خاطئ لكل سؤال (للمواجهات التي نختبر فيها الخطأ)
   const results = [];
   for (let i = 0; i < 6; i++) {
-    await p.waitForTimeout(1200); if (i === 0) await p.screenshot({ path: OUT + '/01_walk.png' });
+    await p.waitForFunction(() => window.__game, null, { timeout: 60000 }); await p.waitForTimeout(500); if (i === 0) await p.screenshot({ path: OUT + '/01_walk.png' });
     await waitMode('question');
     await p.waitForTimeout(500);
     const info = await p.evaluate(() => ({ q: document.getElementById('qtext').textContent, opts: [...document.querySelectorAll('.ans .t')].map(e => e.textContent), enc: document.getElementById('chEnc').textContent, stu: document.getElementById('chStu').textContent }));
